@@ -5,14 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.slack.circuit.runtime.CircuitContext
+import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.presenter.presenterOf
-import com.slack.circuit.runtime.screen.Screen
-
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface CounterEvent : CircuitUiEvent {
     data object Increase : CounterEvent
@@ -26,7 +24,7 @@ data class CounterState(
     val eventSink: (CounterEvent) -> Unit
 ) : CircuitUiState
 
-
+@CircuitInject(CounterScreen::class, AppScope::class)
 class CounterPresenter(
     private val navigator: Navigator
 ) : Presenter<CounterState> {
@@ -43,18 +41,5 @@ class CounterPresenter(
                 }
             }
         )
-    }
-
-    class PresenterFactory : Presenter.Factory {
-        override fun create(
-            screen: Screen,
-            navigator: Navigator,
-            context: CircuitContext
-        ): Presenter<*>? {
-            return when (screen) {
-                is CounterScreen -> CounterPresenter(navigator)
-                else -> null
-            }
-        }
     }
 }

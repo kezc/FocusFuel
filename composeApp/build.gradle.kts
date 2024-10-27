@@ -15,6 +15,11 @@ plugins {
 }
 
 kotlin {
+    ksp {
+        arg("circuit.codegen.mode", "kotlin_inject_anvil")
+        arg("kotlin-inject-anvil-contributing-annotations", "com.slack.circuit.codegen.annotations.CircuitInject")
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -27,8 +32,8 @@ kotlin {
     }
     
     listOf(
-        iosX64(),
-        iosArm64(),
+//        iosX64(),
+//        iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -52,13 +57,17 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
 
             implementation(libs.kotlin.inject.runtime)
+            implementation(libs.kotlin.inject.anvil.runtime)
+            implementation(libs.kotlin.inject.anvil.runtimeoptional)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.arrow.core)
             implementation(libs.arrow.fx.coroutines)
+
             implementation(libs.circuit.foundation)
             implementation(libs.circuit.overlay)
+            implementation(libs.circuit.codegen.annotation)
         }
     }
 }
@@ -92,12 +101,15 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    kspCommonMainMetadata(libs.kotlin.inject.compiler)
 
+    kspCommonMainMetadata(libs.kotlin.inject.compiler)
+    kspCommonMainMetadata(libs.kotlin.inject.anvil.compiler)
+    kspCommonMainMetadata(libs.circuit.codegen.ksp)
 }
 
 addKspDependencyForAllTargets(libs.kotlin.inject.compiler)
-
+addKspDependencyForAllTargets(libs.circuit.codegen.ksp)
+addKspDependencyForAllTargets(libs.kotlin.inject.anvil.compiler)
 
 // source: https://github.com/chrisbanes/tivi/tree/main
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)

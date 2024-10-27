@@ -1,8 +1,7 @@
 package pl.wojtek.focusfuel
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.runtime.remember
+import androidx.compose.ui.window.ComposeUIViewController
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -12,16 +11,9 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val circuit = AppComponent::class.create().circuit
-
-        setContent {
-            App(circuit)
-        }
-    }
+fun MainViewController() = ComposeUIViewController {
+    val circuit =  remember { AppComponent::class.create().circuit }
+    App(circuit)
 }
 
 @Component
