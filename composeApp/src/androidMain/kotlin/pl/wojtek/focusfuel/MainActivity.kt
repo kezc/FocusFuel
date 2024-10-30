@@ -3,6 +3,7 @@ package pl.wojtek.focusfuel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -17,6 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val circuit = AppComponent::class.create().circuit
+        enableEdgeToEdge()
 
         setContent {
             App(circuit)
@@ -27,7 +29,7 @@ class MainActivity : ComponentActivity() {
 @Component
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
-abstract class AppComponent : AppComponentMerged{
+abstract class AppComponent : AppComponentMerged {
     abstract val presenterFactories: Set<Presenter.Factory>
     abstract val uiFactories: Set<Ui.Factory>
 

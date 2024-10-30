@@ -1,6 +1,8 @@
 package pl.wojtek.focusfuel.counter
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +26,9 @@ class CounterUI : Ui<CounterState> {
 
 @Composable
 private fun CounterUI(modifier: Modifier = Modifier, state: CounterState) {
-    Column {
+    Column(
+        modifier = modifier.systemBarsPadding()
+    ) {
         Button(
             onClick = { state.eventSink(CounterEvent.Decrease) },
             content = { Text("+") }
