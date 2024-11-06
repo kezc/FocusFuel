@@ -1,7 +1,9 @@
 package pl.wojtek.focusfuel
 
-import androidx.compose.material.MaterialTheme
+import AppTheme
 import androidx.compose.runtime.Composable
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.platformLogWriter
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -13,7 +15,9 @@ import pl.wojtek.focusfuel.counter.CounterScreen
 @Composable
 @Preview
 fun App(circuit: Circuit) {
-    MaterialTheme {
+    Logger.setLogWriters(platformLogWriter())
+
+    AppTheme {
         val backstack = rememberSaveableBackStack(CounterScreen)
 
         val navigator = rememberCircuitNavigator(

@@ -12,14 +12,14 @@ import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 fun MainViewController() = ComposeUIViewController {
-    val circuit =  remember { AppComponent::class.create().circuit }
+    val circuit = remember { AppComponent::class.create().circuit }
     App(circuit)
 }
 
 @Component
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
-abstract class AppComponent : AppComponentMerged{
+abstract class AppComponent : AppComponentMerged {
     abstract val presenterFactories: Set<Presenter.Factory>
     abstract val uiFactories: Set<Ui.Factory>
 

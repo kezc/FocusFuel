@@ -17,7 +17,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val circuit = AppComponent::class.create().circuit
+
         enableEdgeToEdge()
 
         setContent {

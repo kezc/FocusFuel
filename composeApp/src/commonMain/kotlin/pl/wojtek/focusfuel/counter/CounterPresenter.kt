@@ -10,6 +10,7 @@ import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import pl.wojtek.focusfuel.pomodoro.PomodoroScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface CounterEvent : CircuitUiEvent {
@@ -37,7 +38,7 @@ class CounterPresenter(
                 when (event) {
                     is CounterEvent.Increase -> count++
                     is CounterEvent.Decrease -> count--
-                    CounterEvent.Pop -> navigator.pop()
+                    CounterEvent.Pop -> navigator.goTo(PomodoroScreen)
                 }
             }
         )
