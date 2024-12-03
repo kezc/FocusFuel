@@ -2,6 +2,7 @@ package pl.wojtek.focusfuel
 
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
+import com.russhwolf.settings.Settings
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -31,6 +32,10 @@ abstract class AppComponent : AppComponentMerged {
             .addUiFactories(uiFactories)
             .build()
     }
+
+    @SingleIn(AppScope::class)
+    @Provides
+    fun provideSettings(): Settings = Settings()
 
     abstract val circuit: Circuit
 }

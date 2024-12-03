@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.russhwolf.settings.Settings
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -43,6 +44,10 @@ abstract class AppComponent : AppComponentMerged {
             .addUiFactories(uiFactories)
             .build()
     }
+
+    @SingleIn(AppScope::class)
+    @Provides
+    fun provideSettings(): Settings = Settings()
 
     abstract val circuit: Circuit
 }

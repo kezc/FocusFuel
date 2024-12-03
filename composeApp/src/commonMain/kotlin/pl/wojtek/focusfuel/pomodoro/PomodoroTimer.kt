@@ -10,20 +10,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
+import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 
-class PomodoroTimer {
-    private val _state = MutableStateFlow(
-        PomodoroTimerState(
-            currentPhase = PomodoroPhase.WORK,
-            timeRemainingSeconds = WORK_TIME,
-            totalSeconds = WORK_TIME,
-            isRunning = false,
-            completedPomodoros = 0
-        )
-    )
+class PomodoroTimer @Inject constructor(
+    private val pomodoroSaver: PomodoroSaver
+) {
+    private val _state = MutableStateFlow(pomodoroSaver.loadState())
     val state: StateFlow<PomodoroTimerState> = _state.asStateFlow()
 
     private var timerJob: Job? = null
+
+    init {
+        if (state.value.isRunning) {
+            startTimer()
+        }
+    }
 
     fun toggleTimer() {
         val currentState = _state.value
@@ -34,9 +37,13 @@ class PomodoroTimer {
         }
     }
 
+    fun save() {
+        pomodoroSaver.saveState(_state.value)
+    }
+
     private fun startTimer() {
         if (timerJob?.isActive == true) return
-        
+
         _state.update { it.copy(isRunning = true) }
         timerJob = CoroutineScope(Dispatchers.Default).launch {
             while (isActive) {
@@ -53,40 +60,38 @@ class PomodoroTimer {
 
     private fun updateTimer() {
         _state.update { currentState ->
-            var newState = currentState.copy(
+            val newState = currentState.copy(
                 timeRemainingSeconds = currentState.timeRemainingSeconds - 1
             )
+            if (newState.timeRemainingSeconds > 0) {
+                return@update newState
+            }
 
-            if (newState.timeRemainingSeconds <= 0) {
-                newState = when (currentState.currentPhase) {
-                    PomodoroPhase.WORK -> {
-                        val newCompletedPomodoros = currentState.completedPomodoros + 1
-                        if (newCompletedPomodoros % 4 == 0) {
-                            currentState.copy(
-                                currentPhase = PomodoroPhase.LONG_BREAK,
-                                timeRemainingSeconds = LONG_BREAK_TIME,
-                                totalSeconds = LONG_BREAK_TIME,
-                                completedPomodoros = newCompletedPomodoros
-                            )
-                        } else {
-                            currentState.copy(
-                                currentPhase = PomodoroPhase.SHORT_BREAK,
-                                timeRemainingSeconds = SHORT_BREAK_TIME,
-                                totalSeconds = SHORT_BREAK_TIME,
-                                completedPomodoros = newCompletedPomodoros
-                            )
-                        }
-                    }
-                    PomodoroPhase.SHORT_BREAK, PomodoroPhase.LONG_BREAK -> {
+            when (currentState.currentPhase) {
+                PomodoroPhase.WORK -> {
+                    val newCompletedPomodoros = currentState.completedPomodoros + 1
+                    if (newCompletedPomodoros % 4 == 0) {
                         currentState.copy(
-                            currentPhase = PomodoroPhase.WORK,
-                            timeRemainingSeconds = WORK_TIME,
-                            totalSeconds = WORK_TIME
+                            currentPhase = PomodoroPhase.LONG_BREAK,
+                            timeRemainingSeconds = LONG_BREAK_TIME,
+                            completedPomodoros = newCompletedPomodoros
+                        )
+                    } else {
+                        currentState.copy(
+                            currentPhase = PomodoroPhase.SHORT_BREAK,
+                            timeRemainingSeconds = SHORT_BREAK_TIME,
+                            completedPomodoros = newCompletedPomodoros
                         )
                     }
                 }
+
+                PomodoroPhase.SHORT_BREAK, PomodoroPhase.LONG_BREAK -> {
+                    currentState.copy(
+                        currentPhase = PomodoroPhase.WORK,
+                        timeRemainingSeconds = WORK_TIME,
+                    )
+                }
             }
-            newState
         }
     }
 
@@ -96,7 +101,6 @@ class PomodoroTimer {
             PomodoroTimerState(
                 currentPhase = PomodoroPhase.WORK,
                 timeRemainingSeconds = WORK_TIME,
-                totalSeconds = WORK_TIME,
                 isRunning = false,
                 completedPomodoros = 0
             )
@@ -113,23 +117,21 @@ class PomodoroTimer {
                         currentState.copy(
                             currentPhase = PomodoroPhase.LONG_BREAK,
                             timeRemainingSeconds = LONG_BREAK_TIME,
-                            totalSeconds = LONG_BREAK_TIME,
                             completedPomodoros = newCompletedPomodoros
                         )
                     } else {
                         currentState.copy(
                             currentPhase = PomodoroPhase.SHORT_BREAK,
                             timeRemainingSeconds = SHORT_BREAK_TIME,
-                            totalSeconds = SHORT_BREAK_TIME,
                             completedPomodoros = newCompletedPomodoros
                         )
                     }
                 }
+
                 PomodoroPhase.SHORT_BREAK, PomodoroPhase.LONG_BREAK -> {
                     currentState.copy(
                         currentPhase = PomodoroPhase.WORK,
                         timeRemainingSeconds = WORK_TIME,
-                        totalSeconds = WORK_TIME
                     )
                 }
             }
@@ -143,13 +145,13 @@ class PomodoroTimer {
     }
 }
 
+@CommonParcelize
 data class PomodoroTimerState(
-    val currentPhase: PomodoroPhase,
-    val timeRemainingSeconds: Int,
-    val totalSeconds: Int,
-    val isRunning: Boolean,
-    val completedPomodoros: Int
-)
+    val currentPhase: PomodoroPhase = PomodoroPhase.WORK,
+    val timeRemainingSeconds: Int = PomodoroTimer.WORK_TIME,
+    val isRunning: Boolean = false,
+    val completedPomodoros: Int = 0
+) : CommonParcelable
 
 enum class PomodoroPhase {
     WORK,

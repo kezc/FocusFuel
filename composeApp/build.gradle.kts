@@ -71,6 +71,11 @@ kotlin {
 
             implementation(libs.coroutines.core)
 
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.no.arg)
+
+            implementation(libs.kotlinx.datetime)
+
             implementation(libs.kermit)
         }
         commonTest.dependencies {

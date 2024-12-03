@@ -1,10 +1,13 @@
 package pl.wojtek.focusfuel.counter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -31,13 +34,15 @@ class CounterPresenter(
 ) : Presenter<CounterState> {
     @Composable
     override fun present(): CounterState {
-        var count by remember { mutableStateOf(0) }
+        var count by rememberSaveable { mutableStateOf(0) }
         return CounterState(
             count = count,
             eventSink = { event ->
                 when (event) {
                     is CounterEvent.Increase -> count++
+
                     is CounterEvent.Decrease -> count--
+
                     CounterEvent.Pop -> navigator.goTo(PomodoroScreen)
                 }
             }
