@@ -11,22 +11,31 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +57,7 @@ class PomodoroUI : Ui<PomodoroState> {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
     val backgroundColor = when (state.currentPhase) {
@@ -56,25 +66,35 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
         PomodoroPhase.LONG_BREAK -> MaterialTheme.colorScheme.tertiaryContainer
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-            .systemBarsPadding()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            PhaseIndicator(state.currentPhase)
-
-            TimerDisplay(state.timerDisplay)
-
-            ControlButtons(state)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = backgroundColor,
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor),
+                title = { },
+                navigationIcon = {
+                    IconButton(onClick = { state.eventSink(PomodoroEvent.Back) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier.padding(paddingValues).fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                PhaseIndicator(state.currentPhase)
+                TimerDisplay(state.timerDisplay)
+                ControlButtons(state)
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -103,12 +123,12 @@ private fun PhaseIndicator(phase: PomodoroPhase) {
 private fun TimerDisplay(time: String) {
     Card(
         modifier = Modifier
-            .size(250.dp)
-            .clip(CircleShape),
+            .size(250.dp),
+        shape = CircleShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

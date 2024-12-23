@@ -8,7 +8,9 @@ import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
+import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import kotlin.math.roundToInt
@@ -17,6 +19,7 @@ sealed interface PomodoroEvent : CircuitUiEvent {
     data object ToggleTimer : PomodoroEvent
     data object Reset : PomodoroEvent
     data object Skip : PomodoroEvent
+    data object Back : PomodoroEvent
 }
 
 data class PomodoroState(
@@ -28,8 +31,10 @@ data class PomodoroState(
 ) : CircuitUiState
 
 @CircuitInject(PomodoroScreen::class, AppScope::class)
-class PomodoroPresenter @Inject constructor(
-    private val pomodoroTimer: PomodoroTimer
+@Inject
+class PomodoroPresenter(
+    private val pomodoroTimer: PomodoroTimer,
+    @Assisted private val navigator: Navigator,
 ) : FocusPresenter<PomodoroState>() {
     @Composable
     override fun presentState(): PomodoroState {
@@ -51,6 +56,7 @@ class PomodoroPresenter @Inject constructor(
                     PomodoroEvent.ToggleTimer -> pomodoroTimer.toggleTimer()
                     PomodoroEvent.Reset -> pomodoroTimer.reset()
                     PomodoroEvent.Skip -> pomodoroTimer.skip()
+                    PomodoroEvent.Back -> navigator.pop()
                 }
             }
         )
