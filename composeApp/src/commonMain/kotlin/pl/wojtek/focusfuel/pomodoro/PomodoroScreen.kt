@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowDropDown
-import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledIconButton
@@ -24,19 +24,16 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -85,7 +82,7 @@ private fun PhaseIndicator(phase: PomodoroPhase) {
     Card(
         modifier = Modifier.padding(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
@@ -109,7 +106,7 @@ private fun TimerDisplay(time: String) {
             .size(250.dp)
             .clip(CircleShape),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
@@ -147,12 +144,12 @@ fun PlayOrPauseButton(state: PomodoroState) {
         onClick = { state.eventSink(PomodoroEvent.ToggleTimer) },
         modifier = Modifier.size(72.dp),
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Icon(
             imageVector = if (state.isRunning)
-                Icons.Rounded.ArrowDropDown else Icons.Rounded.PlayArrow,
+                Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
             contentDescription = if (state.isRunning) "Pause" else "Start",
             modifier = Modifier.size(36.dp)
         )
@@ -167,11 +164,11 @@ private fun SkipButton(
         onClick = { state.eventSink(PomodoroEvent.Skip) },
         modifier = Modifier.size(56.dp),
         colors = IconButtonDefaults.filledTonalIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Icon(
-            imageVector = Icons.Rounded.Close,
+            imageVector = Icons.Rounded.SkipNext,
             contentDescription = "Skip"
         )
     }
@@ -183,7 +180,7 @@ private fun ResetButton(state: PomodoroState) {
         onClick = { state.eventSink(PomodoroEvent.Reset) },
         modifier = Modifier.size(56.dp),
         colors = IconButtonDefaults.filledTonalIconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Icon(
@@ -191,4 +188,46 @@ private fun ResetButton(state: PomodoroState) {
             contentDescription = "Reset"
         )
     }
+}
+
+@Composable
+@Preview
+fun PreviewPomodoroWork() {
+    PomodoroUI(
+        state = PomodoroState(
+            currentPhase = PomodoroPhase.WORK,
+            timeRemainingSeconds = 1500,
+            isRunning = true,
+            timerDisplay = "25:00",
+            eventSink = {}
+        )
+    )
+}
+
+@Composable
+@Preview
+fun PreviewPomodoroShortBreak() {
+    PomodoroUI(
+        state = PomodoroState(
+            currentPhase = PomodoroPhase.SHORT_BREAK,
+            timeRemainingSeconds = 300,
+            isRunning = false,
+            timerDisplay = "05:00",
+            eventSink = {}
+        )
+    )
+}
+
+@Composable
+@Preview
+fun PreviewPomodoroLongBreak() {
+    PomodoroUI(
+        state = PomodoroState(
+            currentPhase = PomodoroPhase.LONG_BREAK,
+            timeRemainingSeconds = 900,
+            isRunning = false,
+            timerDisplay = "15:00",
+            eventSink = {}
+        )
+    )
 }
