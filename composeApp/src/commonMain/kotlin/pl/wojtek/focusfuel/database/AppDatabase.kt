@@ -9,12 +9,15 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.TypeConverters
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDateTime
 
-@Database(entities = [TodoEntity::class], version = 1)
+@Database(entities = [PomodoroEntity::class], version = 1)
+@TypeConverters(DateConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun getDao(): TodoDao
+    abstract fun pomodoroDao(): PomodoroDao
 }
 
 // The Room compiler generates the `actual` implementations.
@@ -24,20 +27,19 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 }
 
 @Dao
-interface TodoDao {
+interface PomodoroDao {
     @Insert
-    suspend fun insert(item: TodoEntity)
+    suspend fun insert(item: PomodoroEntity)
 
-    @Query("SELECT count(*) FROM TodoEntity")
+    @Query("SELECT count(*) FROM PomodoroEntity")
     suspend fun count(): Int
 
-    @Query("SELECT * FROM TodoEntity")
-    fun getAllAsFlow(): Flow<List<TodoEntity>>
+    @Query("SELECT * FROM PomodoroEntity")
+    fun getAllAsFlow(): Flow<List<PomodoroEntity>>
 }
 
 @Entity
-data class TodoEntity(
+data class PomodoroEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val title: String,
-    val content: String
+    val date: LocalDateTime
 )

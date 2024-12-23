@@ -1,5 +1,4 @@
 import org.gradle.configurationcache.extensions.capitalized
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -24,7 +23,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.addAll(
                 "-P",
                 "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=pl.wojtek.focusfuel.util.parcelize.CommonParcelize"

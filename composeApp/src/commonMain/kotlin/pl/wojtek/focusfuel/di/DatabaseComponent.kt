@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
+import pl.wojtek.focusfuel.database.PomodoroDao
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -22,5 +23,11 @@ interface DatabaseComponent {
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
+    }
+
+    @SingleIn(AppScope::class)
+    @Provides
+    fun providePomodorosDao(appDatabase: AppDatabase): PomodoroDao {
+        return appDatabase.pomodoroDao()
     }
 }

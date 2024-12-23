@@ -1,6 +1,5 @@
 package pl.wojtek.focusfuel.pomodoro
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -14,9 +13,9 @@ import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.LONG_BREAK_TIME_MS
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.SHORT_BREAK_TIME_MS
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.WORK_TIME_MS
+import pl.wojtek.focusfuel.repository.PomodorosRepository
 import pl.wojtek.focusfuel.util.coroutines.DispatchersProvider
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
-import pl.wojtek.focusfuel.util.datetime.TimestampProviderImpl
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 
@@ -24,6 +23,7 @@ class PomodoroTimer @Inject constructor(
     private val pomodoroSaver: PomodoroSaver,
     private val dispatchers: DispatchersProvider,
     private val timestampProvider: TimestampProvider,
+    private val pomodorosRepository: PomodorosRepository,
 ) {
     private val _state = MutableStateFlow(pomodoroSaver.loadState())
     val state: StateFlow<PomodoroTimerState> = _state.asStateFlow()

@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val circuit = AppComponent::class.create().circuit
+        val circuit = AppComponent::class.create(applicationContext).circuit
 
         enableEdgeToEdge()
 
@@ -36,7 +36,9 @@ class MainActivity : ComponentActivity() {
 @Component
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
-abstract class AppComponent : AppComponentMerged {
+abstract class AppComponent(
+    @get:Provides val context: Context
+) : AppComponentMerged {
     abstract val presenterFactories: Set<Presenter.Factory>
     abstract val uiFactories: Set<Ui.Factory>
     abstract val circuit: Circuit
