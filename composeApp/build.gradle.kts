@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -66,6 +67,9 @@ kotlin {
             implementation(libs.arrow.core)
             implementation(libs.arrow.fx.coroutines)
 
+            implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.androidx.room.runtime)
+
             implementation(libs.circuit.foundation)
             implementation(libs.circuit.overlay)
             implementation(libs.circuit.codegen.annotation)
@@ -109,13 +113,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
@@ -124,11 +132,13 @@ dependencies {
     kspCommonMainMetadata(libs.kotlin.inject.compiler)
     kspCommonMainMetadata(libs.kotlin.inject.anvil.compiler)
     kspCommonMainMetadata(libs.circuit.codegen.ksp)
+    kspCommonMainMetadata(libs.androidx.room.compiler)
 }
 
 addKspDependencyForAllTargets(libs.kotlin.inject.compiler)
-addKspDependencyForAllTargets(libs.circuit.codegen.ksp)
 addKspDependencyForAllTargets(libs.kotlin.inject.anvil.compiler)
+addKspDependencyForAllTargets(libs.circuit.codegen.ksp)
+addKspDependencyForAllTargets(libs.androidx.room.compiler)
 
 // source: https://github.com/chrisbanes/tivi/tree/main
 fun Project.addKspDependencyForAllTargets(dependencyNotation: Any) = addKspDependencyForAllTargets("", dependencyNotation)

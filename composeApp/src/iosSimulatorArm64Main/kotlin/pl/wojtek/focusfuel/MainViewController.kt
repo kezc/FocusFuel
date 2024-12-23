@@ -2,12 +2,19 @@ package pl.wojtek.focusfuel
 
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.russhwolf.settings.Settings
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import kotlinx.cinterop.ExperimentalForeignApi
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import pl.wojtek.focusfuel.database.AppDatabase
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSUserDomainMask
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -23,6 +30,7 @@ fun MainViewController() = ComposeUIViewController {
 abstract class AppComponent : AppComponentMerged {
     abstract val presenterFactories: Set<Presenter.Factory>
     abstract val uiFactories: Set<Ui.Factory>
+    abstract val circuit: Circuit
 
     @SingleIn(AppScope::class)
     @Provides
@@ -33,9 +41,24 @@ abstract class AppComponent : AppComponentMerged {
             .build()
     }
 
-    @SingleIn(AppScope::class)
     @Provides
-    fun provideSettings(): Settings = Settings()
+    fun provideDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
+        val dbFilePath = documentDirectory() + "/my_room.db"
+        return Room.databaseBuilder<AppDatabase>(
+            name = dbFilePath,
+        )
+    }
 
-    abstract val circuit: Circuit
+    @OptIn(ExperimentalForeignApi::class)
+    private fun documentDirectory(): String {
+        val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
+            directory = NSDocumentDirectory,
+            inDomain = NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null,
+        )
+        return requireNotNull(documentDirectory?.path)
+    }
+
 }
