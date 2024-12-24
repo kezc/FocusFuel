@@ -7,12 +7,12 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
-import pl.wojtek.focusfuel.util.coroutines.DispatchersProvider
+import kotlinx.datetime.LocalDateTime
+import pl.wojtek.focusfuel.repository.PomodorosRepository
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,25 +22,33 @@ import kotlin.time.Duration
 @OptIn(ExperimentalCoroutinesApi::class)
 class PomodoroTimerTest {
 
-    private lateinit var pomodoroTimer: PomodoroTimer
     private lateinit var pomodoroSaver: FakePomodoroSaver
     private val testDispatcher = UnconfinedTestDispatcher()
-    private val dispatchersProvider =
-        DispatchersProvider(testDispatcher, testDispatcher, testDispatcher, testDispatcher)
     private val timestampProvider = object : TimestampProvider {
         override fun getTimestamp(): Long = testDispatcher.scheduler.currentTime
     }
+    private val fakePomodoroDao = object : PomodorosRepository {
+        override fun addPomodoro(date: LocalDateTime) {}
 
-    @BeforeTest
-    fun setup() {
+        override suspend fun getTotalPomodorosFinished(): Int {
+            return 0
+        }
+    }
+
+    private fun createSut(): PomodoroTimer {
         Logger.setLogWriters(CommonWriter())
         pomodoroSaver = FakePomodoroSaver()
-        pomodoroTimer = PomodoroTimer(pomodoroSaver, dispatchersProvider, timestampProvider)
+        return PomodoroTimer(
+            pomodoroSaver = pomodoroSaver,
+            timestampProvider = timestampProvider,
+            coroutineScope = TestScope(testDispatcher),
+            pomodorosRepository = fakePomodoroDao
+        ).also { it.init() }
     }
 
     @Test
     fun `GIVEN initial state WHEN initialized THEN it is work phase with correct duration`() = runTest {
-        pomodoroTimer.state.logTest {
+        createSut().state.logTest {
             val initialState = awaitItem()
             assertEquals(PomodoroPhase.WORK, initialState.currentPhase)
             assertEquals(PomodoroTimer.WORK_TIME_MS, initialState.timeRemainingMs)
@@ -50,18 +58,21 @@ class PomodoroTimerTest {
     }
 
     @Test
-    fun `GIVEN timer is stopped WHEN toggleTimer is called THEN it starts and stops correctly`() = runTest {
-        pomodoroTimer.state.logTest {
-            pomodoroTimer.toggleTimer()
-            assertTrue(expectMostRecentItem().isRunning)
+    fun `GIVEN timer is stopped WHEN toggleTimer is called THEN it starts and stops correctly`() =
+        runTest {
+            val pomodoroTimer = createSut()
+            pomodoroTimer.state.logTest {
+                pomodoroTimer.toggleTimer()
+                assertTrue(expectMostRecentItem().isRunning)
 
-            pomodoroTimer.toggleTimer()
-            assertFalse(expectMostRecentItem().isRunning)
+                pomodoroTimer.toggleTimer()
+                assertFalse(expectMostRecentItem().isRunning)
+            }
         }
-    }
 
     @Test
     fun `GIVEN timer is running WHEN reset is called THEN it returns to initial state`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.toggleTimer()
 
@@ -75,6 +86,7 @@ class PomodoroTimerTest {
 
     @Test
     fun `GIVEN work phase WHEN skip is called THEN it transitions to short break`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip()
             val state = expectMostRecentItem()
@@ -85,6 +97,7 @@ class PomodoroTimerTest {
 
     @Test
     fun `GIVEN short break WHEN skip is called THEN it transitions to work`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip() // Move to SHORT_BREAK
 
@@ -96,22 +109,25 @@ class PomodoroTimerTest {
     }
 
     @Test
-    fun `GIVEN 4 completed work phases WHEN skip is called THEN it transitions to long break`() = runTest {
-        pomodoroTimer.state.logTest {
-            repeat(3) {
-                pomodoroTimer.skip() // WORK -> SHORT_BREAK
-                pomodoroTimer.skip() // SHORT_BREAK -> WORK
-            }
-            pomodoroTimer.skip() // WORK -> LONG_BREAK
+    fun `GIVEN 4 completed work phases WHEN skip is called THEN it transitions to long break`() =
+        runTest {
+            val pomodoroTimer = createSut()
+            pomodoroTimer.state.logTest {
+                repeat(3) {
+                    pomodoroTimer.skip() // WORK -> SHORT_BREAK
+                    pomodoroTimer.skip() // SHORT_BREAK -> WORK
+                }
+                pomodoroTimer.skip() // WORK -> LONG_BREAK
 
-            val state = expectMostRecentItem()
-            assertEquals(PomodoroPhase.LONG_BREAK, state.currentPhase)
-            assertEquals(PomodoroTimer.LONG_BREAK_TIME_MS, state.timeRemainingMs)
+                val state = expectMostRecentItem()
+                assertEquals(PomodoroPhase.LONG_BREAK, state.currentPhase)
+                assertEquals(PomodoroTimer.LONG_BREAK_TIME_MS, state.timeRemainingMs)
+            }
         }
-    }
 
     @Test
     fun `GIVEN timer is running WHEN time advances THEN it decrements correctly`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.toggleTimer() // Start timer
 
@@ -124,6 +140,7 @@ class PomodoroTimerTest {
 
     @Test
     fun `GIVEN timer is running WHEN time runs out THEN it transitions phase`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip() // Move to SHORT_BREAK
 
@@ -138,7 +155,8 @@ class PomodoroTimerTest {
     }
 
     @Test
-    fun `GIVEN state is running WHEN save is called THEN it persists the state`() {
+    fun `GIVEN state is running WHEN save is called THEN it persists the state`() = runTest {
+        val pomodoroTimer = createSut()
         pomodoroTimer.toggleTimer()
         pomodoroTimer.save()
 

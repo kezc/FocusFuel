@@ -2,8 +2,12 @@ package pl.wojtek.focusfuel.pomodoro
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.util.datetime.TimestampProviderImpl
+import pl.wojtek.focusfuel.repository.PomodorosRepository
+import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -19,30 +23,50 @@ private const val LAST_UPDATED_TIMESTAMP = "LAST_UPDATED_TIMESTAMP"
 @ContributesBinding(AppScope::class)
 class PomodoroSaverImpl(
     private val settings: Settings,
-    private val timestampProvider: TimestampProviderImpl,
+    private val timestampProvider: TimestampProvider,
+    private val pomodorosRepository: PomodorosRepository,
 ) : PomodoroSaver {
     override fun loadState(): PomodoroTimerState {
         val default = PomodoroTimerState()
         val currentPhase = PomodoroPhase.valueOf(settings.getString(CURRENT_PHASE, default.currentPhase.name))
-        val savedTimeRemainingSeconds = settings.getLong(TIME_REMAINING_MS, default.timeRemainingMs)
+        val savedTimeRemainingMs = settings.getLong(TIME_REMAINING_MS, default.timeRemainingMs)
         val savedIsRunning = settings.getBoolean(IS_RUNNING, default.isRunning)
         val completedPomodoros = settings.getInt(COMPLETED_POMODOROS, default.completedPomodoros)
         val lastUpdatedTimestamp = settings.getLong(LAST_UPDATED_TIMESTAMP, timestampProvider.getTimestamp())
 
-        val elapsedTime = (timestampProvider.getTimestamp() - lastUpdatedTimestamp) / 1000
-        val timeRemainingSeconds = if (savedIsRunning) {
-            (savedTimeRemainingSeconds - elapsedTime).coerceAtLeast(0)
+        val elapsedTime = timestampProvider.getTimestamp() - lastUpdatedTimestamp
+        val timeRemainingMs = if (savedIsRunning) {
+            (savedTimeRemainingMs - elapsedTime).coerceAtLeast(0)
         } else {
-            savedTimeRemainingSeconds
+            savedTimeRemainingMs
         }
-        val (newPhase, newCompletedPomodoros, timeRemainingSecondsAdjusted) = newPhaseIfPreviousCompleted(
-            currentPhase,
-            completedPomodoros,
-            timeRemainingSeconds
+        val (newPhase, newCompletedPomodoros, timeRemainingMsAdjusted) = newPhaseIfPreviousCompleted(
+            currentPhase = currentPhase,
+            completedPomodoros = completedPomodoros,
+            timeRemainingSeconds = timeRemainingMs
         )
-        val isRunning = savedIsRunning && timeRemainingSeconds > 0
+        checkIfFinishedPomodoro(
+            isPomodoroFinished = newCompletedPomodoros > completedPomodoros,
+            lastUpdatedTimestamp = lastUpdatedTimestamp,
+            timeRemainingSeconds = timeRemainingMsAdjusted,
+        )
+        val isRunning = savedIsRunning && timeRemainingMsAdjusted > 0
 
-        return PomodoroTimerState(newPhase, timeRemainingSecondsAdjusted, isRunning, newCompletedPomodoros)
+        return PomodoroTimerState(
+            currentPhase = newPhase,
+            timeRemainingMs = timeRemainingMsAdjusted,
+            isRunning = isRunning,
+            completedPomodoros = newCompletedPomodoros
+        )
+    }
+
+    private fun checkIfFinishedPomodoro(isPomodoroFinished: Boolean, lastUpdatedTimestamp: Long, timeRemainingSeconds: Long) {
+        val date = Instant
+            .fromEpochMilliseconds(lastUpdatedTimestamp + timeRemainingSeconds)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+        if (isPomodoroFinished) {
+            pomodorosRepository.addPomodoro(date)
+        }
     }
 
     private fun newPhaseIfPreviousCompleted(

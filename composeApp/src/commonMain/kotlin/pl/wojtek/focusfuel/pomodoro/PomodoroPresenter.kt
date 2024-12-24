@@ -2,16 +2,26 @@ package pl.wojtek.focusfuel.pomodoro
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.util.asyncEventSink
+import pl.wojtek.focusfuel.util.rememberRetainedCoroutineScope
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import kotlin.math.roundToInt
 
@@ -33,27 +43,33 @@ data class PomodoroState(
 @CircuitInject(PomodoroScreen::class, AppScope::class)
 @Inject
 class PomodoroPresenter(
-    private val pomodoroTimer: PomodoroTimer,
+    private val pomodoroTimerFactory: (CoroutineScope) -> PomodoroTimer,
     @Assisted private val navigator: Navigator,
 ) : FocusPresenter<PomodoroState>() {
     @Composable
     override fun presentState(): PomodoroState {
+        val coroutineScope = rememberRetainedCoroutineScope()
+        val pomodoroTimer = rememberRetained { pomodoroTimerFactory(coroutineScope) }
         val timerState by pomodoroTimer.state.collectAsState()
+
+        LaunchedEffect(Unit) {
+            pomodoroTimer.init()
+        }
+
         LaunchedEffect(timerState) {
-            // workaround bc DisposableEffect here doesn't work on iOS
             pomodoroTimer.save()
         }
 
-        val remainingSeconds = (timerState.timeRemainingMs / 1000f).roundToInt()
+        val remainingSeconds = getRemainingSeconds(timerState)
 
         return PomodoroState(
             currentPhase = timerState.currentPhase,
             timeRemainingSeconds = remainingSeconds,
             isRunning = timerState.isRunning,
             timerDisplay = formatTime(remainingSeconds),
-            eventSink = { event ->
-                when (event) {
-                    PomodoroEvent.ToggleTimer -> pomodoroTimer.toggleTimer()
+            eventSink = asyncEventSink {
+                when (it) {
+                    PomodoroEvent.ToggleTimer -> launch { pomodoroTimer.toggleTimer() }
                     PomodoroEvent.Reset -> pomodoroTimer.reset()
                     PomodoroEvent.Skip -> pomodoroTimer.skip()
                     PomodoroEvent.Back -> navigator.pop()
@@ -61,6 +77,9 @@ class PomodoroPresenter(
             }
         )
     }
+
+    private fun getRemainingSeconds(timerState: PomodoroTimerState) =
+        (timerState.timeRemainingMs / 1000f).roundToInt()
 
     private fun formatTime(seconds: Int): String {
         val minutes = seconds / 60

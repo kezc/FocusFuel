@@ -1,18 +1,17 @@
 package pl.wojtek.focusfuel.counter
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.pomodoro.PomodoroScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -29,8 +28,9 @@ data class CounterState(
 ) : CircuitUiState
 
 @CircuitInject(CounterScreen::class, AppScope::class)
+@Inject
 class CounterPresenter(
-    private val navigator: Navigator
+    @Assisted private val navigator: Navigator,
 ) : Presenter<CounterState> {
     @Composable
     override fun present(): CounterState {

@@ -1,7 +1,9 @@
 package pl.wojtek.focusfuel.pomodoro
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,31 +11,33 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.LONG_BREAK_TIME_MS
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.SHORT_BREAK_TIME_MS
 import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.WORK_TIME_MS
 import pl.wojtek.focusfuel.repository.PomodorosRepository
-import pl.wojtek.focusfuel.util.coroutines.DispatchersProvider
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 
-class PomodoroTimer @Inject constructor(
+@Inject
+class PomodoroTimer(
     private val pomodoroSaver: PomodoroSaver,
-    private val dispatchers: DispatchersProvider,
     private val timestampProvider: TimestampProvider,
+    @Assisted private val coroutineScope: CoroutineScope,
     private val pomodorosRepository: PomodorosRepository,
 ) {
-    private val _state = MutableStateFlow(pomodoroSaver.loadState())
+    private val _state = MutableStateFlow(PomodoroTimerState())
     val state: StateFlow<PomodoroTimerState> = _state.asStateFlow()
 
     private var timerJob: Job? = null
     private var lastUpdate: Long = timestampProvider.getTimestamp()
 
-    init {
+    fun init() {
+        _state.value = pomodoroSaver.loadState().also { Logger.d { "Loaded state: $it" } }
         if (state.value.isRunning) {
-            startTimer()
+            coroutineScope.startTimer()
         }
     }
 
@@ -42,12 +46,12 @@ class PomodoroTimer @Inject constructor(
         if (currentState.isRunning) {
             stopTimer()
         } else {
-            startTimer()
+            coroutineScope.startTimer()
         }
     }
 
     fun save() {
-        pomodoroSaver.saveState(_state.value)
+        pomodoroSaver.saveState(_state.value).also { Logger.d { "Saved state: ${_state.value}" } }
     }
 
     fun reset() {
@@ -62,12 +66,12 @@ class PomodoroTimer @Inject constructor(
         }
     }
 
-    private fun startTimer() {
+    private fun CoroutineScope.startTimer() {
         if (timerJob?.isActive == true) return
 
         _state.update { it.copy(isRunning = true) }
         lastUpdate = timestampProvider.getTimestamp()
-        timerJob = CoroutineScope(dispatchers.default).launch {
+        timerJob = launch {
             while (isActive) {
                 delay(getDelay())
                 updateTimer()
@@ -95,9 +99,16 @@ class PomodoroTimer @Inject constructor(
         val newTimeRemaining = currentState.timeRemainingMs - (currentTimestamp - lastUpdate).toInt()
         lastUpdate = currentTimestamp
         return if (newTimeRemaining <= 0) {
+            persistIfFinishedPomodoro(currentState)
             currentState.transitionToNextState()
         } else {
             currentState.copy(timeRemainingMs = newTimeRemaining)
+        }
+    }
+
+    private fun persistIfFinishedPomodoro(currentState: PomodoroTimerState) {
+        if (currentState.currentPhase == PomodoroPhase.WORK) {
+            pomodorosRepository.addPomodoro()
         }
     }
 
@@ -115,9 +126,12 @@ class PomodoroTimer @Inject constructor(
         }
 
     companion object {
-        const val WORK_TIME_MS = 25 * 60 * 1000L // 25 minutes
-        const val SHORT_BREAK_TIME_MS = 5 * 60 * 1000L // 5 minutes
-        const val LONG_BREAK_TIME_MS = 15 * 60 * 1000L // 15 minutes
+//        const val WORK_TIME_MS = 25 * 60 * 1000L // 25 minutes
+//        const val SHORT_BREAK_TIME_MS = 5 * 60 * 1000L // 5 minutes
+//        const val LONG_BREAK_TIME_MS = 15 * 60 * 1000L // 15 minutes
+const val WORK_TIME_MS = 10 * 1000L // 10 sec
+        const val SHORT_BREAK_TIME_MS = 5 * 1000L // 5 sec
+        const val LONG_BREAK_TIME_MS = 15 * 1000L // 15 sec
     }
 }
 
