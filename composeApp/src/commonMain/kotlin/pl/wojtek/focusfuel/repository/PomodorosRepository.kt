@@ -37,4 +37,4 @@ class PomodorosRepositoryImpl(
 
 }
 
-private fun currentLocalDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+fun currentLocalDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())

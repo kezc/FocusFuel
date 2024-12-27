@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.util
+package pl.wojtek.focusfuel.util.circuit
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope

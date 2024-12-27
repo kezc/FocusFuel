@@ -2,25 +2,19 @@ package pl.wojtek.focusfuel.pomodoro
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.util.asyncEventSink
+import pl.wojtek.focusfuel.util.circuit.FocusPresenter
+import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.rememberRetainedCoroutineScope
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import kotlin.math.roundToInt
@@ -88,12 +82,3 @@ class PomodoroPresenter(
     }
 }
 
-abstract class FocusPresenter<UiState : CircuitUiState> : Presenter<UiState> {
-    @Composable
-    final override fun present(): UiState {
-        return presentState().also { Logger.d { it.toString() } }
-    }
-
-    @Composable
-    abstract fun presentState(): UiState
-}
