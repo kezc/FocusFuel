@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.model
 
 import kotlinx.datetime.LocalDateTime
 

@@ -1,8 +1,10 @@
-package pl.wojtek.focusfuel.util
+package pl.wojtek.focusfuel.util.datetime
 
 import kotlinx.datetime.LocalDateTime
+import me.tatarka.inject.annotations.Inject
 
-class DateTimeHelper {
+@Inject
+class DateTimeFormatter {
 
     fun getFormattedDate(date: LocalDateTime): String {
         val day = date.dayOfMonth

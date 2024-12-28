@@ -6,6 +6,13 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.sqlite.SQLiteConnection
+import pl.wojtek.focusfuel.database.converter.DateConverter
+import pl.wojtek.focusfuel.database.dao.PomodoroDao
+import pl.wojtek.focusfuel.database.dao.ProductDao
+import pl.wojtek.focusfuel.database.dao.PurchaseDao
+import pl.wojtek.focusfuel.database.model.PomodoroEntity
+import pl.wojtek.focusfuel.database.model.ProductEntity
+import pl.wojtek.focusfuel.database.model.PurchaseEntity
 
 @Database(
     entities = [PomodoroEntity::class, ProductEntity::class, PurchaseEntity::class],

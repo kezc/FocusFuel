@@ -12,9 +12,8 @@ import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
+import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import pl.wojtek.focusfuel.util.DateTimeHelper
-import pl.wojtek.focusfuel.model.PurchaseItem
 
 sealed interface PurchaseHistoryEvent : CircuitUiEvent {
     data object Close : PurchaseHistoryEvent
@@ -29,9 +28,9 @@ data class PurchaseHistoryState(
 @Inject
 class PurchaseHistoryPresenter(
     private val shopRepository: ShopRepository,
+    private val dateTimeFormatter: DateTimeFormatter,
     @Assisted private val navigator: Navigator
 ) : FocusPresenter<PurchaseHistoryState>() {
-    private val dateTimeHelper = DateTimeHelper()
 
     @Composable
     override fun presentState(): PurchaseHistoryState {
@@ -40,7 +39,7 @@ class PurchaseHistoryPresenter(
             purchases = purchases.map { purchase ->
                 PurchaseItem(
                     productName = purchase.productName,
-                    formattedDate = dateTimeHelper.getFormattedDate(purchase.date),
+                    formattedDate = dateTimeFormatter.getFormattedDate(purchase.date),
                     price = purchase.costInPomodoros
                 )
             },
@@ -51,4 +50,10 @@ class PurchaseHistoryPresenter(
             }
         )
     }
-} 
+}
+
+data class PurchaseItem(
+    val productName: String,
+    val formattedDate: String,
+    val price: Int
+)

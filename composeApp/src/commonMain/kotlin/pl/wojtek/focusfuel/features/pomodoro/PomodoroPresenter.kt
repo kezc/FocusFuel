@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
-import pl.wojtek.focusfuel.util.rememberRetainedCoroutineScope
+import pl.wojtek.focusfuel.util.circuit.rememberRetainedCoroutineScope
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import kotlin.math.roundToInt
 

@@ -1,17 +1,14 @@
 package pl.wojtek.focusfuel.repository
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDateTime
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.database.ProductDao
-import pl.wojtek.focusfuel.database.PurchaseDao
-import pl.wojtek.focusfuel.database.PurchaseEntity
-import pl.wojtek.focusfuel.database.PurchaseWithProduct
+import pl.wojtek.focusfuel.database.dao.ProductDao
+import pl.wojtek.focusfuel.database.dao.PurchaseDao
+import pl.wojtek.focusfuel.database.model.PurchaseEntity
+import pl.wojtek.focusfuel.database.model.PurchaseWithProduct
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn

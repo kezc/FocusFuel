@@ -1,20 +1,11 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.dao
 
 import androidx.room.Dao
-import androidx.room.Entity
 import androidx.room.Insert
-import androidx.room.PrimaryKey
 import androidx.room.Query
-import kotlinx.datetime.LocalDateTime
-import androidx.room.ForeignKey
 import kotlinx.coroutines.flow.Flow
-
-@Entity(foreignKeys = [ForeignKey(entity = ProductEntity::class, parentColumns = ["id"], childColumns = ["productId"])])
-data class PurchaseEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val productId: String,
-    val date: LocalDateTime
-)
+import pl.wojtek.focusfuel.database.model.PurchaseEntity
+import pl.wojtek.focusfuel.database.model.PurchaseWithProduct
 
 @Dao
 interface PurchaseDao {

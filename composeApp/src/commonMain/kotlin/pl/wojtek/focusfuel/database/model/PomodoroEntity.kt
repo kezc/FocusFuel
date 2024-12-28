@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

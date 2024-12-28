@@ -7,8 +7,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.database.PomodoroDao
-import pl.wojtek.focusfuel.database.PomodoroEntity
+import pl.wojtek.focusfuel.database.dao.PomodoroDao
+import pl.wojtek.focusfuel.database.model.PomodoroEntity
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn

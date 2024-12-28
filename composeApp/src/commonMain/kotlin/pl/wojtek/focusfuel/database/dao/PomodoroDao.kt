@@ -1,9 +1,10 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import pl.wojtek.focusfuel.database.model.PomodoroEntity
 
 @Dao
 interface PomodoroDao {

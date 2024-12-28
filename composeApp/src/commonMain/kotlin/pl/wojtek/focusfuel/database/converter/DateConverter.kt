@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.converter
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant

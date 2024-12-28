@@ -1,18 +1,10 @@
-package pl.wojtek.focusfuel.database
+package pl.wojtek.focusfuel.database.dao
 
 import androidx.room.Dao
-import androidx.room.Entity
 import androidx.room.Insert
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-
-@Entity
-data class ProductEntity(
-    @PrimaryKey val id: String,
-    val name: String,
-    val costInPomodoros: Int
-)
+import pl.wojtek.focusfuel.database.model.ProductEntity
 
 @Dao
 interface ProductDao {

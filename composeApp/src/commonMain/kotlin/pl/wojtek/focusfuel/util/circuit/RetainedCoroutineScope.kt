@@ -1,7 +1,7 @@
 // Copyright (C) 2023 Slack Technologies, LLC
 // SPDX-License-Identifier: Apache-2.0
 
-package pl.wojtek.focusfuel.util
+package pl.wojtek.focusfuel.util.circuit
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.RememberObserver
