@@ -1,0 +1,14 @@
+<resources>
+    <string name="purchase_history_title">Purchase History</string>
+    <string name="purchase_history_back_button_description">Back</string>
+    <string name="shop_title">Shop</string>
+    <string name="shop_available_pomodoros">Available Pomodoros: %1$d</string>
+    <string name="pomodoro_focus_time">Focus Time</string>
+    <string name="pomodoro_short_break">Short Break</string>
+    <string name="pomodoro_long_break">Long Break</string>
+    <string name="shop_purchase_success">Purchase Successful</string>
+    <string name="shop_insufficient_pomodoros">Insufficient Pomodoros</string>
+    <string name="pomodoro_reset_button_description">Reset</string>
+    <string name="pomodoro_skip_button_description">Skip</string>
+
+</resources>

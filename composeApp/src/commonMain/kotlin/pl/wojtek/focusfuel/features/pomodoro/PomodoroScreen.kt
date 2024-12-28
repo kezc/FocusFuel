@@ -1,6 +1,5 @@
 package pl.wojtek.focusfuel.features.pomodoro
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
@@ -29,19 +26,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.pomodoro_focus_time
+import focusfuel.composeapp.generated.resources.pomodoro_long_break
+import focusfuel.composeapp.generated.resources.pomodoro_reset_button_description
+import focusfuel.composeapp.generated.resources.pomodoro_short_break
+import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -108,9 +109,9 @@ private fun PhaseIndicator(phase: PomodoroPhase) {
     ) {
         Text(
             text = when (phase) {
-                PomodoroPhase.WORK -> "Focus Time"
-                PomodoroPhase.SHORT_BREAK -> "Short Break"
-                PomodoroPhase.LONG_BREAK -> "Long Break"
+                PomodoroPhase.WORK -> stringResource(Res.string.pomodoro_focus_time)
+                PomodoroPhase.SHORT_BREAK -> stringResource(Res.string.pomodoro_short_break)
+                PomodoroPhase.LONG_BREAK -> stringResource(Res.string.pomodoro_long_break)
             },
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
             style = MaterialTheme.typography.titleMedium,
@@ -189,7 +190,7 @@ private fun SkipButton(
     ) {
         Icon(
             imageVector = Icons.Rounded.SkipNext,
-            contentDescription = "Skip"
+            contentDescription = stringResource(Res.string.pomodoro_skip_button_description)
         )
     }
 }
@@ -205,7 +206,7 @@ private fun ResetButton(state: PomodoroState) {
     ) {
         Icon(
             imageVector = Icons.Rounded.Refresh,
-            contentDescription = "Reset"
+            contentDescription = stringResource(Res.string.pomodoro_reset_button_description)
         )
     }
 }

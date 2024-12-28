@@ -30,7 +30,7 @@ sealed interface ShopEvent : CircuitUiEvent {
 
 data class ShopState(
     val products: List<Product>,
-    val message: String?,
+    val orderResult: ShopPresenter.OrderResult?,
     val availablePomodoros: Int,
     val eventSink: (ShopEvent) -> Unit,
 ) : CircuitUiState
@@ -45,26 +45,26 @@ class ShopPresenter(
     override fun presentState(): ShopState {
         val products by shopRepository.getProducts().collectAsStateWithLifecycle(emptyList())
         val balance by shopRepository.pomodoroBalance().collectAsStateWithLifecycle(0)
-        var message: String? by remember { mutableStateOf(null) }
-        LaunchedEffect(message) {
-            if (message != null) {
+        var orderResult: OrderResult? by remember { mutableStateOf(null) }
+        LaunchedEffect(orderResult) {
+            if (orderResult != null) {
                 delay(3000)
-                message = null
+                orderResult = null
             }
         }
 
         return ShopState(
             products = products,
-            message = message,
+            orderResult = orderResult,
             availablePomodoros = balance,
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is ShopEvent.Buy -> launch {
                         val success = shopRepository.makePurchase(event.product)
-                        message = if (success) {
-                            "Purchase successful!"
+                        orderResult = if (success) {
+                            OrderResult.SUCCESS
                         } else {
-                            "Insufficient pomodoros!"
+                            OrderResult.INSUFFICIENT_POMODOROS
                         }
                     }
 
@@ -77,5 +77,10 @@ class ShopPresenter(
                 }
             }
         )
+    }
+
+    enum class OrderResult {
+        SUCCESS,
+        INSUFFICIENT_POMODOROS
     }
 }

@@ -22,6 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.purchase_history_back_button_description
+import focusfuel.composeapp.generated.resources.shop_available_pomodoros
+import focusfuel.composeapp.generated.resources.shop_insufficient_pomodoros
+import focusfuel.composeapp.generated.resources.shop_purchase_success
+import focusfuel.composeapp.generated.resources.shop_title
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -46,17 +53,17 @@ fun ShopUI(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Shop") },
+                title = { Text(stringResource(Res.string.shop_title)) },
                 navigationIcon = {
                     IconButton(onClick = { state.eventSink(ShopEvent.Close) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.purchase_history_back_button_description))
                     }
                 },
                 actions = {
                     IconButton(onClick = { state.eventSink(ShopEvent.NavigateToPurchaseHistory) }) {
-                        Icon(Icons.Filled.History, contentDescription = "Purchase History")
+                        Icon(Icons.Filled.History, contentDescription = stringResource(Res.string.purchase_history_back_button_description))
                     }
-                    Text("Available Pomodoros: ${state.availablePomodoros}")
+                    Text(stringResource(Res.string.shop_available_pomodoros, state.availablePomodoros))
                 }
             )
         },
@@ -80,9 +87,9 @@ fun ShopUI(
                 }
             }
             
-            state.message?.let { message ->
+            state.orderResult?.let { message ->
                 Text(
-                    text = message,
+                    text = message.toText(),
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .fillMaxWidth(),
@@ -92,6 +99,12 @@ fun ShopUI(
             }
         }
     }
+}
+
+@Composable
+private fun ShopPresenter.OrderResult.toText() = when (this) {
+    ShopPresenter.OrderResult.SUCCESS -> stringResource(Res.string.shop_purchase_success)
+    ShopPresenter.OrderResult.INSUFFICIENT_POMODOROS -> stringResource(Res.string.shop_insufficient_pomodoros)
 }
 
 @Preview
