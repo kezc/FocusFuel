@@ -7,7 +7,10 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.sqlite.SQLiteConnection
 
-@Database(entities = [PomodoroEntity::class], version = 1)
+@Database(
+    entities = [PomodoroEntity::class, ProductEntity::class, PurchaseEntity::class],
+    version = 1
+)
 @TypeConverters(DateConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
