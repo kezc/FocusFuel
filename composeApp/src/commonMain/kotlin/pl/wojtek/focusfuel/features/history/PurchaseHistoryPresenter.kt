@@ -9,6 +9,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.repository.Purchase
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
@@ -36,18 +37,20 @@ class PurchaseHistoryPresenter(
     override fun presentState(): PurchaseHistoryState {
         val purchases by shopRepository.getPurchases().collectAsStateWithLifecycle(emptyList())
         return PurchaseHistoryState(
-            purchases = purchases.map { purchase ->
-                PurchaseItem(
-                    productName = purchase.productName,
-                    formattedDate = dateTimeFormatter.getFormattedDate(purchase.date),
-                    price = purchase.costInPomodoros
-                )
-            },
+            purchases = purchases.toListItem(),
             eventSink = asyncEventSink { event ->
                 when (event) {
                     PurchaseHistoryEvent.Close -> navigator.pop()
                 }
             }
+        )
+    }
+
+    private fun List<Purchase>.toListItem() = map { purchase ->
+        PurchaseItem(
+            productName = purchase.productName,
+            formattedDate = dateTimeFormatter.getFormattedDate(purchase.date),
+            price = purchase.costInPomodoros
         )
     }
 }

@@ -8,7 +8,6 @@ import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.database.dao.ProductDao
 import pl.wojtek.focusfuel.database.dao.PurchaseDao
 import pl.wojtek.focusfuel.database.model.PurchaseEntity
-import pl.wojtek.focusfuel.database.model.PurchaseWithProduct
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -18,7 +17,7 @@ interface ShopRepository {
     fun getProducts(): Flow<List<Product>>
     fun pomodoroBalance(): Flow<Int>
     suspend fun makePurchase(product: Product): Boolean
-    fun getPurchases(): Flow<List<PurchaseWithProduct>>
+    fun getPurchases(): Flow<List<Purchase>>
 }
 
 @Inject
@@ -44,9 +43,19 @@ class ShopRepositoryImpl(
         }
     }
 
-    override fun getPurchases(): Flow<List<PurchaseWithProduct>> {
-        return purchaseDao.getAllPurchasesWithProducts()
-    }
+    override fun getPurchases(): Flow<List<Purchase>> = purchaseDao
+        .getAllPurchasesWithProducts()
+        .map { entities ->
+            entities.map {
+                Purchase(
+                    purchaseId = it.purchaseId,
+                    productId = it.productId,
+                    productName = it.productName,
+                    date = it.date,
+                    costInPomodoros = it.costInPomodoros
+                )
+            }
+        }
 
     override fun pomodoroBalance(): Flow<Int> =
         getTotalSpendings()
@@ -64,6 +73,9 @@ data class Product(
 )
 
 data class Purchase(
+    val purchaseId: Int,
     val productId: String,
-    val date: LocalDateTime
+    val productName: String,
+    val date: LocalDateTime,
+    val costInPomodoros: Int
 )
