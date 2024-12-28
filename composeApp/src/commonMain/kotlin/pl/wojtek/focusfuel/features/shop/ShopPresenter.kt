@@ -15,7 +15,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.features.addproduct.AddProductScreen
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
+import pl.wojtek.focusfuel.features.shop.ShopEvent.*
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
@@ -26,6 +28,7 @@ sealed interface ShopEvent : CircuitUiEvent {
     data object Close : ShopEvent
     data class Buy(val product: Product) : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
+    data object NavigateToAddProduct : ShopEvent
 }
 
 data class ShopState(
@@ -59,7 +62,7 @@ class ShopPresenter(
             availablePomodoros = balance,
             eventSink = asyncEventSink { event ->
                 when (event) {
-                    is ShopEvent.Buy -> launch {
+                    is Buy -> launch {
                         val success = shopRepository.makePurchase(event.product)
                         orderResult = if (success) {
                             OrderResult.SUCCESS
@@ -68,12 +71,13 @@ class ShopPresenter(
                         }
                     }
 
-                    ShopEvent.Close -> navigator.pop()
+                    Close -> navigator.pop()
 
-                    ShopEvent.NavigateToPurchaseHistory -> {
-                        // Logic to navigate to PurchaseHistoryScreen
+                    NavigateToPurchaseHistory ->
                         navigator.goTo(PurchaseHistoryScreen)
-                    }
+
+                    NavigateToAddProduct ->
+                        navigator.goTo(AddProductScreen)
                 }
             }
         )

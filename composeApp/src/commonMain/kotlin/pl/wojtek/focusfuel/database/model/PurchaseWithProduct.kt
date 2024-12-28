@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 
 data class PurchaseWithProduct(
     val purchaseId: Int,
-    val productId: String,
+    val productId: Long,
     val productName: String,
     val date: LocalDateTime,
     val costInPomodoros: Int

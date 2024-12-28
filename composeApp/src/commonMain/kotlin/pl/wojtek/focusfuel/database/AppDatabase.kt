@@ -37,7 +37,7 @@ class AppDatabaseCallback : RoomDatabase.Callback() {
     override fun onCreate(connection: SQLiteConnection) {
         super.onCreate(connection)
         val statement = connection
-            .prepare("INSERT INTO ProductEntity (id, name, costInPomodoros) VALUES ('1', 'Product 1', 5)")
+            .prepare("INSERT INTO ProductEntity (id, name, costInPomodoros) VALUES (1, 'Product 1', 5)")
         while (statement.step());
     }
 }

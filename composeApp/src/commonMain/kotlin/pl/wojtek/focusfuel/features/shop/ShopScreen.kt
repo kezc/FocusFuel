@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -64,6 +65,9 @@ fun ShopUI(
                         Icon(Icons.Filled.History, contentDescription = stringResource(Res.string.purchase_history_back_button_description))
                     }
                     Text(stringResource(Res.string.shop_available_pomodoros, state.availablePomodoros))
+                    IconButton(onClick = { state.eventSink(ShopEvent.NavigateToAddProduct) }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add Product")
+                    }
                 }
             )
         },

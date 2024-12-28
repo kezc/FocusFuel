@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDateTime
 
 @Entity(foreignKeys = [ForeignKey(entity = ProductEntity::class, parentColumns = ["id"], childColumns = ["productId"])])
 data class PurchaseEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val productId: String,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val productId: Long,
     val date: LocalDateTime
 )
