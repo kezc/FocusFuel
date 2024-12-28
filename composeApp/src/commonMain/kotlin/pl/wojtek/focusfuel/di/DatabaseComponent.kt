@@ -26,6 +26,7 @@ interface DatabaseComponent {
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .addCallback(AppDatabaseCallback())
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

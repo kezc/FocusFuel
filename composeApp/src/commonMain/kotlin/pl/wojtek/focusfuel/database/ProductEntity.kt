@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Entity
 data class ProductEntity(
@@ -19,7 +20,7 @@ interface ProductDao {
     suspend fun insert(product: ProductEntity)
 
     @Query("SELECT * FROM ProductEntity")
-    suspend fun getAll(): List<ProductEntity>
+    fun getAll(): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM ProductEntity WHERE id = :productId")
     suspend fun getById(productId: String): ProductEntity?

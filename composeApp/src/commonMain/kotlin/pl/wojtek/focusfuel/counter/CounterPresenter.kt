@@ -13,12 +13,14 @@ import com.slack.circuit.runtime.presenter.Presenter
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.pomodoro.PomodoroScreen
+import pl.wojtek.focusfuel.shop.ShopScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface CounterEvent : CircuitUiEvent {
     data object Increase : CounterEvent
     data object Decrease : CounterEvent
     data object Pop : CounterEvent
+    data object Shop : CounterEvent
 }
 
 // State
@@ -44,6 +46,8 @@ class CounterPresenter(
                     is CounterEvent.Decrease -> count--
 
                     CounterEvent.Pop -> navigator.goTo(PomodoroScreen)
+                    
+                    CounterEvent.Shop -> navigator.goTo(ShopScreen)
                 }
             }
         )

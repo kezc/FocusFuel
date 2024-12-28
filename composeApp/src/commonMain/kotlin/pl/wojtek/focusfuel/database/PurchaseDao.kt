@@ -6,10 +6,13 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.datetime.LocalDateTime
+import androidx.room.ForeignKey
+import kotlinx.coroutines.flow.Flow
 
-@Entity
+@Entity(foreignKeys = [ForeignKey(entity = ProductEntity::class, parentColumns = ["id"], childColumns = ["productId"])])
 data class PurchaseEntity(
-    @PrimaryKey val productId: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val productId: String,
     val date: LocalDateTime
 )
 
@@ -20,4 +23,11 @@ interface PurchaseDao {
 
     @Query("SELECT * FROM PurchaseEntity")
     suspend fun getAll(): List<PurchaseEntity>
+
+    @Query("""
+        SELECT SUM(p.costInPomodoros) 
+        FROM PurchaseEntity pu 
+        JOIN ProductEntity p ON pu.productId = p.id
+    """)
+    fun getTotalSpendings(): Flow<Int?>
 }

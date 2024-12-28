@@ -1,5 +1,10 @@
 package pl.wojtek.focusfuel.repository
 
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDateTime
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.database.ProductDao
@@ -11,7 +16,8 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 
 interface ShopRepository {
-    suspend fun getProducts(): List<Product>
+    fun getProducts(): Flow<List<Product>>
+    fun pomodoroBalance(): Flow<Int>
     suspend fun makePurchase(product: Product): Boolean
     suspend fun getPurchases(): List<Purchase>
 }
@@ -24,11 +30,16 @@ class ShopRepositoryImpl(
     private val pomodorosRepository: PomodorosRepository,
     private val productDao: ProductDao,
 ) : ShopRepository {
-    override suspend fun getProducts(): List<Product> =
-        productDao.getAll().map { Product(it.id, it.name, it.costInPomodoros) }
+    override fun getProducts(): Flow<List<Product>> = productDao
+        .getAll()
+        .map { entities -> entities.map { Product(it.id, it.name, it.costInPomodoros) } }
+
+    override fun pomodoroBalance(): Flow<Int> =
+        getTotalSpendings()
+            .map { pomodorosRepository.getTotalPomodorosFinished() - it }
 
     override suspend fun makePurchase(product: Product): Boolean {
-        val totalPomodoros = pomodorosRepository.getTotalPomodorosFinished()
+        val totalPomodoros = pomodorosRepository.getTotalPomodorosFinished() - getTotalSpendings().first()
         return if (totalPomodoros >= product.costInPomodoros) {
             purchaseDao.insert(PurchaseEntity(productId = product.id, date = currentLocalDateTime()))
             true
@@ -40,6 +51,13 @@ class ShopRepositoryImpl(
     override suspend fun getPurchases(): List<Purchase> {
         return purchaseDao.getAll().map { Purchase(it.productId, it.date) }
     }
+
+
+    private fun getTotalSpendings(): Flow<Int> {
+        return purchaseDao.getTotalSpendings().map { it ?: 0 }.onEach { Logger.d("DUPA") {"Kurwa? $it®"} }
+    }
+
+
 }
 
 data class Product(

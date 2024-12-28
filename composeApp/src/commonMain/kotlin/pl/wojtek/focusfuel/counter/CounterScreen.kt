@@ -39,7 +39,11 @@ private fun CounterUI(modifier: Modifier = Modifier, state: CounterState) {
         )
         Button(
             onClick = { state.eventSink(CounterEvent.Pop) },
-            content = { Text("pop") }
+            content = { Text("Timer") }
+        )
+        Button(
+            onClick = { state.eventSink(CounterEvent.Shop) },
+            content = { Text("Shop") }
         )
     }
 }

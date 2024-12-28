@@ -9,7 +9,7 @@ import androidx.sqlite.SQLiteConnection
 
 @Database(
     entities = [PomodoroEntity::class, ProductEntity::class, PurchaseEntity::class],
-    version = 1
+    version = 2
 )
 @TypeConverters(DateConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
