@@ -25,6 +25,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 sealed interface ShopEvent : CircuitUiEvent {
     data object Close : ShopEvent
     data class Buy(val product: Product) : ShopEvent
+    data object NavigateToPurchaseHistory : ShopEvent
 }
 
 data class ShopState(
@@ -32,8 +33,7 @@ data class ShopState(
     val message: String?,
     val availablePomodoros: Int,
     val eventSink: (ShopEvent) -> Unit,
-) : CircuitUiState {
-}
+) : CircuitUiState
 
 @CircuitInject(ShopScreen::class, AppScope::class)
 @Inject
@@ -69,6 +69,11 @@ class ShopPresenter(
                     }
 
                     ShopEvent.Close -> navigator.pop()
+
+                    ShopEvent.NavigateToPurchaseHistory -> {
+                        // Logic to navigate to PurchaseHistoryScreen
+                        navigator.goTo(PurchaseHistoryScreen)
+                    }
                 }
             }
         )
