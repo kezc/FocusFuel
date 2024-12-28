@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.pomodoro
+package pl.wojtek.focusfuel.features.pomodoro
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

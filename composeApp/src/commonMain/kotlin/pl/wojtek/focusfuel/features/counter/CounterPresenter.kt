@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.counter
+package pl.wojtek.focusfuel.features.counter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,8 +12,8 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.pomodoro.PomodoroScreen
-import pl.wojtek.focusfuel.shop.ShopScreen
+import pl.wojtek.focusfuel.features.pomodoro.PomodoroScreen
+import pl.wojtek.focusfuel.features.shop.ShopScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface CounterEvent : CircuitUiEvent {

@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.shop
+package pl.wojtek.focusfuel.features.history
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

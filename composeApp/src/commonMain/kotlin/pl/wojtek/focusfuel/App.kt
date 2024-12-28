@@ -11,7 +11,7 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import pl.wojtek.focusfuel.counter.CounterScreen
+import pl.wojtek.focusfuel.features.counter.CounterScreen
 
 @Composable
 @Preview

@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.shop
+package pl.wojtek.focusfuel.features.history
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

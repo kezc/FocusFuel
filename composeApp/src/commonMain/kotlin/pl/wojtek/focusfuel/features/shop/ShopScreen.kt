@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.shop
+package pl.wojtek.focusfuel.features.shop
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

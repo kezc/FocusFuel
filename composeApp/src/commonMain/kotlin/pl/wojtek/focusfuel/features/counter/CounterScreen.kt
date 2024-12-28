@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.counter
+package pl.wojtek.focusfuel.features.counter
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.systemBarsPadding

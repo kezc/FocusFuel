@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.shop
+package pl.wojtek.focusfuel.features.shop
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,11 +11,11 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter

@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.pomodoro
+package pl.wojtek.focusfuel.features.pomodoro
 
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set

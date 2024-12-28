@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.pomodoro
+package pl.wojtek.focusfuel.features.pomodoro
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

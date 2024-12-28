@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.pomodoro
+package pl.wojtek.focusfuel.features.pomodoro
 
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
@@ -13,9 +13,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.LONG_BREAK_TIME_MS
-import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.SHORT_BREAK_TIME_MS
-import pl.wojtek.focusfuel.pomodoro.PomodoroTimer.Companion.WORK_TIME_MS
+import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer.Companion.LONG_BREAK_TIME_MS
+import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer.Companion.SHORT_BREAK_TIME_MS
+import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer.Companion.WORK_TIME_MS
 import pl.wojtek.focusfuel.repository.PomodorosRepository
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
