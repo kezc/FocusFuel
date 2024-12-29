@@ -44,6 +44,7 @@ import focusfuel.composeapp.generated.resources.pomodoro_short_break
 import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -75,12 +76,7 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor),
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = { state.eventSink(PomodoroEvent.Back) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
+                    AppCloseIcon(onClick = { state.eventSink(PomodoroEvent.Back) })
                 }
             )
         },

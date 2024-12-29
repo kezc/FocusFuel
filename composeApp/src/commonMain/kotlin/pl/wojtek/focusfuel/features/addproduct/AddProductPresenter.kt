@@ -12,6 +12,10 @@ import com.slack.circuit.runtime.Navigator
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.Add
+import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.Close
+import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetName
+import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetPrice
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
@@ -21,6 +25,7 @@ sealed interface AddProductEvent : CircuitUiEvent {
     data class SetName(val name: String) : AddProductEvent
     data class SetPrice(val price: String) : AddProductEvent
     data object Add : AddProductEvent
+    data object Close : AddProductEvent
 }
 
 data class AddProductState(
@@ -47,7 +52,7 @@ class AddProductPresenter(
             price = price,
             eventSink = asyncEventSink { event ->
                 when (event) {
-                    is AddProductEvent.Add -> launch {
+                    is Add -> launch {
                         if (initialProduct != null) {
                             shopRepository.hideProduct(initialProduct)
                         }
@@ -58,8 +63,9 @@ class AddProductPresenter(
                         navigator.pop()
                     }
 
-                    is AddProductEvent.SetName -> name = event.name
-                    is AddProductEvent.SetPrice -> price = event.price
+                    is SetName -> name = event.name
+                    is SetPrice -> price = event.price
+                    is Close -> navigator.pop()
                 }
             }
         )

@@ -19,6 +19,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import pl.wojtek.focusfuel.repository.Product
+import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -43,7 +44,9 @@ fun AddProductUI(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Add Product") })
+            TopAppBar(title = { Text("Add Product") }, navigationIcon = {
+                AppCloseIcon(onClick = { state.eventSink(AddProductEvent.Close) })
+            })
         },
         modifier = modifier
     ) { innerPadding ->

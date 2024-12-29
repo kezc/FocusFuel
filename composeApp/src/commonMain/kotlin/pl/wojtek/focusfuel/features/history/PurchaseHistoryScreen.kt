@@ -3,11 +3,7 @@ package pl.wojtek.focusfuel.features.history
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,10 +15,10 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
-import focusfuel.composeapp.generated.resources.purchase_history_back_button_description
 import focusfuel.composeapp.generated.resources.purchase_history_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -48,12 +44,7 @@ fun PurchaseHistoryUI(
             TopAppBar(
                 title = { Text(stringResource(Res.string.purchase_history_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { state.eventSink(PurchaseHistoryEvent.Close) }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.purchase_history_back_button_description)
-                        )
-                    }
+                    AppCloseIcon(onClick = { state.eventSink(PurchaseHistoryEvent.Close) })
                 }
             )
         },
