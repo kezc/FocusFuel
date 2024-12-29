@@ -71,6 +71,7 @@ kotlin {
 
             implementation(libs.circuit.foundation)
             implementation(libs.circuit.overlay)
+            implementation(libs.circuitx.overlay)
             implementation(libs.circuit.codegen.annotation)
 
             implementation(libs.coroutines.core)

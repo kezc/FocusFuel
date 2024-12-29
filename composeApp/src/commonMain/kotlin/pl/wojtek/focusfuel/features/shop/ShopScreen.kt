@@ -1,13 +1,17 @@
 package pl.wojtek.focusfuel.features.shop
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,13 +20,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import com.slack.circuitx.overlays.BottomSheetOverlay
 import focusfuel.composeapp.generated.resources.Res
 import focusfuel.composeapp.generated.resources.purchase_history_back_button_description
 import focusfuel.composeapp.generated.resources.shop_available_pomodoros
@@ -31,6 +39,7 @@ import focusfuel.composeapp.generated.resources.shop_purchase_success
 import focusfuel.composeapp.generated.resources.shop_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.features.shop.ShopEvent.*
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -41,6 +50,8 @@ object ShopScreen : Screen
 class ShopUI : Ui<ShopState> {
     @Composable
     override fun Content(state: ShopState, modifier: Modifier) {
+        ProductBottomSheetHandler(state)
+
         ShopUI(modifier, state)
     }
 }
@@ -56,16 +67,22 @@ fun ShopUI(
             TopAppBar(
                 title = { Text(stringResource(Res.string.shop_title)) },
                 navigationIcon = {
-                    IconButton(onClick = { state.eventSink(ShopEvent.Close) }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.purchase_history_back_button_description))
+                    IconButton(onClick = { state.eventSink(Close) }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(Res.string.purchase_history_back_button_description)
+                        )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { state.eventSink(ShopEvent.NavigateToPurchaseHistory) }) {
-                        Icon(Icons.Filled.History, contentDescription = stringResource(Res.string.purchase_history_back_button_description))
+                    IconButton(onClick = { state.eventSink(NavigateToPurchaseHistory) }) {
+                        Icon(
+                            Icons.Filled.History,
+                            contentDescription = stringResource(Res.string.purchase_history_back_button_description)
+                        )
                     }
                     Text(stringResource(Res.string.shop_available_pomodoros, state.availablePomodoros))
-                    IconButton(onClick = { state.eventSink(ShopEvent.NavigateToAddProduct) }) {
+                    IconButton(onClick = { state.eventSink(NavigateToAddProduct) }) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Product")
                     }
                 }
@@ -74,34 +91,55 @@ fun ShopUI(
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+            state.orderResult?.let { message ->
+                Text(
+                    text = message.toText(),
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
             state.products.forEach { product ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .clickable {
-                            state.eventSink(ShopEvent.Buy(product))
+                            state.eventSink(Buy(product))
                         },
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(
-                        text = "${product.name} - ${product.costInPomodoros} pomodoros",
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Row {
+                        Text(
+                            text = "${product.name} - ${product.costInPomodoros} pomodoros",
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        MoreOptions(
+                            onClick = { state.eventSink(ShowProductBottomSheet(product)) }
+                        )
+                    }
                 }
             }
-            
-            state.orderResult?.let { message ->
-                Text(
-                    text = message.toText(),
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
         }
+    }
+}
+
+@Composable
+fun MoreOptions(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable { onClick() }
+            .padding(8.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = "More Options",
+            tint = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

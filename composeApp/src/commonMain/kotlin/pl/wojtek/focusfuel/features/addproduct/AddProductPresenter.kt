@@ -12,12 +12,10 @@ import com.slack.circuit.runtime.Navigator
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 sealed interface AddProductEvent : CircuitUiEvent {
     data class SetName(val name: String) : AddProductEvent
@@ -34,13 +32,15 @@ data class AddProductState(
 @CircuitInject(AddProductScreen::class, AppScope::class)
 @Inject
 class AddProductPresenter(
+    @Assisted private val addProductScreen: AddProductScreen,
     private val shopRepository: ShopRepository,
     @Assisted private val navigator: Navigator,
 ) : FocusPresenter<AddProductState>() {
     @Composable
     override fun presentState(): AddProductState {
-        var name by remember { mutableStateOf("") }
-        var price by remember { mutableStateOf("") }
+        val initialProduct = addProductScreen.product
+        var name by remember { mutableStateOf(initialProduct?.name ?: "") }
+        var price by remember { mutableStateOf(initialProduct?.costInPomodoros?.toString() ?: "") }
 
         return AddProductState(
             name = name,
@@ -48,15 +48,20 @@ class AddProductPresenter(
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is AddProductEvent.Add -> launch {
+                        if (initialProduct != null) {
+                            shopRepository.hideProduct(initialProduct)
+                        }
                         shopRepository.addProduct(
                             name = name,
                             costInPomodoros = price.toIntOrNull() ?: 0
                         )
+                        navigator.pop()
                     }
 
                     is AddProductEvent.SetName -> name = event.name
                     is AddProductEvent.SetPrice -> price = event.price
                 }
-            })
+            }
+        )
     }
 } 

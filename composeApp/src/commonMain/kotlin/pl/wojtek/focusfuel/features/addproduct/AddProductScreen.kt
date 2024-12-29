@@ -18,11 +18,14 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 @CommonParcelize
-object AddProductScreen : Screen
+data class AddProductScreen(
+    val product: Product? = null
+) : Screen
 
 @CircuitInject(AddProductScreen::class, AppScope::class)
 class AddProductUI : Ui<AddProductState> {

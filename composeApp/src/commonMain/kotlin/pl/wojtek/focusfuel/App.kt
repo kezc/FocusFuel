@@ -10,6 +10,7 @@ import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.overlay.ContentWithOverlays
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.counter.CounterScreen
 
@@ -29,7 +30,9 @@ fun App(circuit: Circuit) {
         )
 
         CircuitCompositionLocals(circuit) {
-            NavigableCircuitContent(navigator, backstack)
+            ContentWithOverlays {
+                NavigableCircuitContent(navigator = navigator, backStack = backstack)
+            }
         }
     }
 }

@@ -29,6 +29,10 @@ sealed interface ShopEvent : CircuitUiEvent {
     data class Buy(val product: Product) : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
     data object NavigateToAddProduct : ShopEvent
+    data class ShowProductBottomSheet(val product: Product) : ShopEvent
+    data object HideProductBottomSheet : ShopEvent
+    data object DeleteProduct : ShopEvent
+    data object NavigateToEditProduct : ShopEvent
 }
 
 data class ShopState(
@@ -36,6 +40,7 @@ data class ShopState(
     val orderResult: ShopPresenter.OrderResult?,
     val availablePomodoros: Int,
     val eventSink: (ShopEvent) -> Unit,
+    val showProductBottomSheet: Product?,
 ) : CircuitUiState
 
 @CircuitInject(ShopScreen::class, AppScope::class)
@@ -55,20 +60,18 @@ class ShopPresenter(
                 orderResult = null
             }
         }
+        var showProductBottomSheet by remember { mutableStateOf<Product?>(null) }
 
         return ShopState(
             products = products,
             orderResult = orderResult,
             availablePomodoros = balance,
+            showProductBottomSheet = showProductBottomSheet,
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is Buy -> launch {
                         val success = shopRepository.makePurchase(event.product)
-                        orderResult = if (success) {
-                            OrderResult.SUCCESS
-                        } else {
-                            OrderResult.INSUFFICIENT_POMODOROS
-                        }
+                        orderResult = getOrderResult(success)
                     }
 
                     Close -> navigator.pop()
@@ -77,10 +80,28 @@ class ShopPresenter(
                         navigator.goTo(PurchaseHistoryScreen)
 
                     NavigateToAddProduct ->
-                        navigator.goTo(AddProductScreen)
+                        navigator.goTo(AddProductScreen())
+
+                    is NavigateToEditProduct ->
+                        navigator.goTo(AddProductScreen(showProductBottomSheet))
+
+                    is ShowProductBottomSheet -> showProductBottomSheet = event.product
+
+                    HideProductBottomSheet -> showProductBottomSheet = null
+
+                    DeleteProduct -> launch {
+                        shopRepository.hideProduct(showProductBottomSheet!!)
+                        showProductBottomSheet = null
+                    }
                 }
             }
         )
+    }
+
+    private fun getOrderResult(success: Boolean) = if (success) {
+        OrderResult.SUCCESS
+    } else {
+        OrderResult.INSUFFICIENT_POMODOROS
     }
 
     enum class OrderResult {

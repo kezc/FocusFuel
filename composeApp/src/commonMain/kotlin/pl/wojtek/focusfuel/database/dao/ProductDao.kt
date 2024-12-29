@@ -3,6 +3,7 @@ package pl.wojtek.focusfuel.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.wojtek.focusfuel.database.model.ProductEntity
 
@@ -10,6 +11,9 @@ import pl.wojtek.focusfuel.database.model.ProductEntity
 interface ProductDao {
     @Insert
     suspend fun insert(product: ProductEntity)
+
+    @Update
+    suspend fun update(product: ProductEntity)
 
     @Query("SELECT * FROM ProductEntity")
     fun getAll(): Flow<List<ProductEntity>>

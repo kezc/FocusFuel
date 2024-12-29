@@ -9,6 +9,8 @@ import pl.wojtek.focusfuel.database.dao.ProductDao
 import pl.wojtek.focusfuel.database.dao.PurchaseDao
 import pl.wojtek.focusfuel.database.model.ProductEntity
 import pl.wojtek.focusfuel.database.model.PurchaseEntity
+import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
+import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -20,6 +22,7 @@ interface ShopRepository {
     suspend fun makePurchase(product: Product): Boolean
     fun getPurchases(): Flow<List<Purchase>>
     suspend fun addProduct(name: String, costInPomodoros: Int)
+    suspend fun hideProduct(product: Product)
 }
 
 @Inject
@@ -33,7 +36,11 @@ class ShopRepositoryImpl(
 
     override fun getProducts(): Flow<List<Product>> = productDao
         .getAll()
-        .map { entities -> entities.map { Product(it.id, it.name, it.costInPomodoros) } }
+        .map { entities ->
+            entities
+                .filter { !it.hidden }
+                .map { Product(it.id, it.name, it.costInPomodoros) }
+        }
 
     override suspend fun makePurchase(product: Product): Boolean {
         val totalPomodoros = pomodorosRepository.getTotalPomodorosFinished() - getTotalSpendings().first()
@@ -75,13 +82,24 @@ class ShopRepositoryImpl(
         )
     }
 
+    override suspend fun hideProduct(product: Product) {
+        productDao.update(
+            ProductEntity(
+                id = product.id,
+                name = product.name,
+                costInPomodoros = product.costInPomodoros,
+                hidden = true
+            )
+        )
+    }
 }
 
+@CommonParcelize
 data class Product(
     val id: Long,
     val name: String,
     val costInPomodoros: Int
-)
+) : CommonParcelable
 
 data class Purchase(
     val purchaseId: Int,
