@@ -17,6 +17,7 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.features.addproduct.AddProductScreen
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
+import pl.wojtek.focusfuel.features.pomodoro.PomodoroScreen
 import pl.wojtek.focusfuel.features.shop.ShopEvent.*
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
@@ -28,6 +29,7 @@ sealed interface ShopEvent : CircuitUiEvent {
     data object Close : ShopEvent
     data class Buy(val product: Product) : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
+    data object NavigateToPomodoro : ShopEvent
     data object NavigateToAddProduct : ShopEvent
     data class ShowProductBottomSheet(val product: Product) : ShopEvent
     data object HideProductBottomSheet : ShopEvent
@@ -84,6 +86,8 @@ class ShopPresenter(
 
                     is NavigateToEditProduct ->
                         navigator.goTo(AddProductScreen(showProductBottomSheet))
+
+                    NavigateToPomodoro -> navigator.goTo(PomodoroScreen)
 
                     is ShowProductBottomSheet -> showProductBottomSheet = event.product
 
