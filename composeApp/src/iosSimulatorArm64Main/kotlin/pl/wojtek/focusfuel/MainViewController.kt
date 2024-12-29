@@ -4,14 +4,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.russhwolf.settings.Settings
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import kotlinx.cinterop.ExperimentalForeignApi
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
+import pl.wojtek.focusfuel.features.counter.CounterScreen
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -21,7 +23,14 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 fun MainViewController() = ComposeUIViewController {
     val circuit = remember { AppComponent::class.create().circuit }
-    App(circuit)
+    App(
+        circuit = circuit,
+        backstack = rememberSaveableBackStack(CounterScreen),
+        navigator = rememberCircuitNavigator(
+            backStack = rememberSaveableBackStack(CounterScreen),
+            onRootPop = { /* no-op */ }
+        )
+    )
 }
 
 @Component

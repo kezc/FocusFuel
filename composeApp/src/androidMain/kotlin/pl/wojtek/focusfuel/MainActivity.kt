@@ -7,13 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.russhwolf.settings.Settings
+import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
+import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
+import pl.wojtek.focusfuel.features.counter.CounterScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -28,7 +30,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            App(circuit)
+            val backstack = rememberSaveableBackStack(CounterScreen)
+
+            val navigator = rememberCircuitNavigator(
+                backStack = backstack,
+            )
+
+            App(circuit, backstack, navigator)
         }
     }
 }
