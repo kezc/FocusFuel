@@ -1,5 +1,6 @@
 package pl.wojtek.focusfuel.features.pomodoro
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,12 +40,15 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.ic_tomato
 import focusfuel.composeapp.generated.resources.pomodoro_focus_time
 import focusfuel.composeapp.generated.resources.pomodoro_long_break
 import focusfuel.composeapp.generated.resources.pomodoro_reset_button_description
 import focusfuel.composeapp.generated.resources.pomodoro_short_break
 import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
@@ -118,26 +124,33 @@ private fun PhaseIndicator(phase: PomodoroPhase) {
 
 @Composable
 private fun TimerDisplay(time: String) {
-    Card(
-        modifier = Modifier
-            .size(250.dp),
-        shape = CircleShape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+    Box {
+        Card(
+            modifier = Modifier
+                .size(250.dp),
+            shape = CircleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            Text(
-                text = time,
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = time,
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
+        Image(
+            imageVector = vectorResource(Res.drawable.ic_tomato),
+            contentDescription = null,
+            modifier = Modifier.size(75.dp).rotate(30f).align(Alignment.TopEnd)
+        )
     }
 }
 
