@@ -23,11 +23,12 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 fun MainViewController() = ComposeUIViewController {
     val circuit = remember { AppComponent::class.create().circuit }
+    val backstack = rememberSaveableBackStack(CounterScreen)
     App(
         circuit = circuit,
-        backstack = rememberSaveableBackStack(CounterScreen),
+        backstack = backstack,
         navigator = rememberCircuitNavigator(
-            backStack = rememberSaveableBackStack(CounterScreen),
+            backStack = backstack,
             onRootPop = { /* no-op */ }
         )
     )
