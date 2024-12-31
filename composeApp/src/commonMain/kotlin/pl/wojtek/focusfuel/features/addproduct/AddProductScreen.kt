@@ -2,11 +2,13 @@ package pl.wojtek.focusfuel.features.addproduct
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,22 +53,24 @@ fun AddProductUI(
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            TextField(
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = state.name,
                 onValueChange = { state.eventSink(AddProductEvent.SetName(it)) },
                 label = { Text("Product Name") }
             )
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = state.price,
                 onValueChange = { state.eventSink(AddProductEvent.SetPrice(it)) },
                 label = { Text("Product Price") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                state.eventSink(AddProductEvent.Add)
-            }) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { state.eventSink(AddProductEvent.Add) }) {
                 Text("Add Product")
             }
         }
