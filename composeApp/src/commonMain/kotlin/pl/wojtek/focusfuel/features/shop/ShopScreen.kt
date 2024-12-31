@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -50,6 +51,7 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.ui.AppIconButton
+import pl.wojtek.focusfuel.ui.ShowAnimatedText
 import pl.wojtek.focusfuel.ui.unboundedClickable
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -89,16 +91,17 @@ fun ShopUI(
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            state.orderResult?.let { message ->
+            ShowAnimatedText(state.orderResult?.toText(), {
                 Text(
-                    text = message.toText(),
+                    text = it,
                     modifier = Modifier
                         .padding(bottom = 16.dp)
                         .fillMaxWidth(),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center
                 )
-            }
+            }, 2000)
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -122,18 +125,18 @@ fun AddNewProductCard(eventSink: (ShopEvent) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { eventSink(NavigateToAddProduct) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 2.dp, start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = CenterVertically
         ) {
+            AddProductIcon(eventSink)
             Text(
                 text = "Add new product",
                 style = MaterialTheme.typography.titleMedium,
             )
-            AddProductIcon(eventSink)
         }
     }
 }
