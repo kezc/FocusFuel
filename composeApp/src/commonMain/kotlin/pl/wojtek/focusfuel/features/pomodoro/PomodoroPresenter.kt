@@ -16,6 +16,7 @@ import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.circuit.rememberRetainedCoroutineScope
+import pl.wojtek.focusfuel.util.datetime.PomodoroTimeFormat.formatPomodoroTime
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import kotlin.math.roundToInt
 
@@ -28,7 +29,6 @@ sealed interface PomodoroEvent : CircuitUiEvent {
 
 data class PomodoroState(
     val currentPhase: PomodoroPhase,
-    val timeRemainingSeconds: Int,
     val isRunning: Boolean,
     val timerDisplay: String,
     val eventSink: (PomodoroEvent) -> Unit
@@ -37,13 +37,11 @@ data class PomodoroState(
 @CircuitInject(PomodoroScreen::class, AppScope::class)
 @Inject
 class PomodoroPresenter(
-    private val pomodoroTimerFactory: (CoroutineScope) -> PomodoroTimer,
+    private val pomodoroTimer: PomodoroTimer,
     @Assisted private val navigator: Navigator,
 ) : FocusPresenter<PomodoroState>() {
     @Composable
     override fun presentState(): PomodoroState {
-        val coroutineScope = rememberRetainedCoroutineScope()
-        val pomodoroTimer = rememberRetained { pomodoroTimerFactory(coroutineScope) }
         val timerState by pomodoroTimer.state.collectAsState()
 
         LaunchedEffect(Unit) {
@@ -54,13 +52,11 @@ class PomodoroPresenter(
             pomodoroTimer.save()
         }
 
-        val remainingSeconds = getRemainingSeconds(timerState)
 
         return PomodoroState(
             currentPhase = timerState.currentPhase,
-            timeRemainingSeconds = remainingSeconds,
             isRunning = timerState.isRunning,
-            timerDisplay = formatTime(remainingSeconds),
+            timerDisplay = formatPomodoroTime(timerState.timeRemainingMs),
             eventSink = asyncEventSink {
                 when (it) {
                     PomodoroEvent.ToggleTimer -> launch { pomodoroTimer.toggleTimer() }
@@ -72,13 +68,5 @@ class PomodoroPresenter(
         )
     }
 
-    private fun getRemainingSeconds(timerState: PomodoroTimerState) =
-        (timerState.timeRemainingMs / 1000f).roundToInt()
-
-    private fun formatTime(seconds: Int): String {
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        return "${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}"
-    }
 }
 

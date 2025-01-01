@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.mmk.kmpnotifier.permission.permissionUtil
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -25,9 +26,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val circuit = AppComponent::class.create(applicationContext).circuit
+        val circuit = (applicationContext as FocusFuelApp).appComponent.circuit
 
         enableEdgeToEdge()
+        val permissionUtil by permissionUtil()
+        permissionUtil.askNotificationPermission()
 
         setContent {
             val backstack = rememberSaveableBackStack(CounterScreen)
@@ -50,6 +53,7 @@ abstract class AppComponent(
     abstract val presenterFactories: Set<Presenter.Factory>
     abstract val uiFactories: Set<Ui.Factory>
     abstract val circuit: Circuit
+    abstract val pomodoroServiceManager: PomodoroServiceManager
 
     @SingleIn(AppScope::class)
     @Provides

@@ -10,6 +10,9 @@ import androidx.compose.ui.window.rememberWindowState
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import co.touchlab.kermit.Logger
+import com.mmk.kmpnotifier.extensions.composeDesktopResourcesPath
+import com.mmk.kmpnotifier.notification.NotifierManager
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -33,6 +36,13 @@ fun main() = application {
         )
     val circuit = remember { AppComponent::class.create().circuit }
     val backstack = rememberSaveableBackStack(CounterScreen)
+    NotifierManager.initialize(
+        NotificationPlatformConfiguration.Desktop(
+            showPushNotification = true,
+            notificationIconPath = composeDesktopResourcesPath() + File.separator + "notification_icon.png"
+        )
+    )
+
     Window(
         title = "FocusFuel",
         state = windowState,

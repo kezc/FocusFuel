@@ -3,7 +3,6 @@ package pl.wojtek.focusfuel.features.pomodoro
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer.Companion.LONG_BREAK_TIME_MS
 import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer.Companion.SHORT_BREAK_TIME_MS
@@ -20,12 +18,15 @@ import pl.wojtek.focusfuel.repository.PomodorosRepository
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelable
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
+import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 @Inject
+@SingleIn(AppScope::class)
 class PomodoroTimer(
     private val pomodoroSaver: PomodoroSaver,
     private val timestampProvider: TimestampProvider,
-    @Assisted private val coroutineScope: CoroutineScope,
+    private val coroutineScope: CoroutineScope,
     private val pomodorosRepository: PomodorosRepository,
 ) {
     private val _state = MutableStateFlow(PomodoroTimerState())
@@ -37,7 +38,7 @@ class PomodoroTimer(
     fun init() {
         _state.value = pomodoroSaver.loadState().also { Logger.d { "Loaded state: $it" } }
         if (state.value.isRunning) {
-            coroutineScope.startTimer()
+            startTimer()
         }
     }
 
@@ -46,7 +47,7 @@ class PomodoroTimer(
         if (currentState.isRunning) {
             stopTimer()
         } else {
-            coroutineScope.startTimer()
+            startTimer()
         }
     }
 
@@ -66,12 +67,12 @@ class PomodoroTimer(
         }
     }
 
-    private fun CoroutineScope.startTimer() {
+    private fun startTimer() {
         if (timerJob?.isActive == true) return
 
         _state.update { it.copy(isRunning = true) }
         lastUpdate = timestampProvider.getTimestamp()
-        timerJob = launch {
+        timerJob = coroutineScope.launch {
             while (isActive) {
                 delay(getDelay())
                 updateTimer()

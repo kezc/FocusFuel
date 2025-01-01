@@ -87,6 +87,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             implementation(libs.kermit)
+
+            implementation(libs.kmpnotifier)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -129,6 +131,7 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
 }
 
 compose.desktop {

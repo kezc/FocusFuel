@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">FocusFuel</string>
+    <string name="purchase_history_title">Purchase History</string>
+    <string name="pomodoro_focus_time">Current Phase: Focus Time</string>
+    <string name="pomodoro_short_break">Current Phase: Short Break</string>
+    <string name="pomodoro_long_break">Current Phase: Long Break</string>
+    <string name="time_remaining">Time Remaining: %s</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="timer_channel">Pomodoro Timer Channel</string>
 </resources>

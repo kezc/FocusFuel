@@ -226,7 +226,6 @@ fun PreviewPomodoroWork() {
     PomodoroUI(
         state = PomodoroState(
             currentPhase = PomodoroPhase.WORK,
-            timeRemainingSeconds = 1500,
             isRunning = true,
             timerDisplay = "25:00",
             eventSink = {}
@@ -240,7 +239,6 @@ fun PreviewPomodoroShortBreak() {
     PomodoroUI(
         state = PomodoroState(
             currentPhase = PomodoroPhase.SHORT_BREAK,
-            timeRemainingSeconds = 300,
             isRunning = false,
             timerDisplay = "05:00",
             eventSink = {}
@@ -254,7 +252,6 @@ fun PreviewPomodoroLongBreak() {
     PomodoroUI(
         state = PomodoroState(
             currentPhase = PomodoroPhase.LONG_BREAK,
-            timeRemainingSeconds = 900,
             isRunning = false,
             timerDisplay = "15:00",
             eventSink = {}
