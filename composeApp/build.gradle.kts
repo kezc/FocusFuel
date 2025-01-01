@@ -1,4 +1,5 @@
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -19,6 +20,8 @@ kotlin {
         arg("circuit.codegen.mode", "kotlin_inject_anvil")
         arg("kotlin-inject-anvil-contributing-annotations", "com.slack.circuit.codegen.annotations.CircuitInject")
     }
+
+    jvm()
 
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -43,7 +46,8 @@ kotlin {
     }
     
     sourceSets {
-        
+        val jvmMain by getting
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -89,6 +93,10 @@ kotlin {
             implementation(libs.circuit.test)
             implementation(libs.coroutines.test)
         }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
+        }
     }
 }
 
@@ -120,6 +128,18 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "pl.wojtek.focusfuel.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "pl.wojtek.focusfuel"
+            packageVersion = "1.0.0"
+        }
     }
 }
 
