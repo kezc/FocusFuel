@@ -128,7 +128,7 @@ fun AddNewProductCard(eventSink: (ShopEvent) -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 2.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(top = 2.dp, bottom = 2.dp, start = 4.dp, end = 4.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = CenterVertically
         ) {
