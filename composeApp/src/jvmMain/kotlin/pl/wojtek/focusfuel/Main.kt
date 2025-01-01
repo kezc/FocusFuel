@@ -9,6 +9,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import co.touchlab.kermit.Logger
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.rememberCircuitNavigator
@@ -67,9 +68,10 @@ abstract class AppComponent : AppComponentMerged {
 
     @Provides
     fun provideDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
-        val dbFilePath = File(System.getProperty("java.io.tmpdir"), "my_room.db")
+        val dbFilePath = File(System.getProperty("java.io.tmpdir"), "focusfuel/my_mroom.db").absolutePath
+        Logger.d("DB path: $dbFilePath")
         return Room.databaseBuilder<AppDatabase>(
-            name = dbFilePath.absolutePath,
+            name = dbFilePath,
         )
     }
 }
