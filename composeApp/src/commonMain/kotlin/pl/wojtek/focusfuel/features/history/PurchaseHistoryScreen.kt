@@ -1,23 +1,31 @@
 package pl.wojtek.focusfuel.features.history
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
@@ -25,9 +33,12 @@ import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
 import focusfuel.composeapp.generated.resources.ic_tomato
 import focusfuel.composeapp.generated.resources.purchase_history_title
+import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.Close
+import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
 import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -54,7 +65,7 @@ fun PurchaseHistoryUI(
             TopAppBar(
                 title = { Text(stringResource(Res.string.purchase_history_title)) },
                 navigationIcon = {
-                    AppCloseIcon(onClick = { state.eventSink(PurchaseHistoryEvent.Close) })
+                    AppCloseIcon(onClick = { state.eventSink(Close) })
                 }
             )
         },
@@ -63,39 +74,85 @@ fun PurchaseHistoryUI(
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
             state.purchases.forEach { purchase ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(modifier = Modifier.width(IntrinsicSize.Max)) {
-                            Text(
-                                modifier = Modifier.weight(1f),
-                                text = purchase.productName,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Row {
-                                Icon(
-                                    painter = painterResource(Res.drawable.ic_tomato),
-                                    contentDescription = "Pomodoros",
-                                    modifier = Modifier.padding(end = 2.dp)
-                                )
-                                Text(text = "${purchase.price}")
+                        Column {
+                            Row(modifier = Modifier.width(IntrinsicSize.Max)) {
+                                NameText(purchase)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                PriceText(purchase)
                             }
+                            DateText(purchase)
                         }
-                        Text(
-                            text = purchase.formattedDate,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
+                        UsedCheckbox(purchase, state)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RowScope.NameText(purchase: PurchaseItem) {
+    Text(
+        modifier = Modifier.Companion.weight(1f),
+        text = purchase.productName,
+        style = MaterialTheme.typography.titleMedium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun PriceText(purchase: PurchaseItem) {
+    Row {
+        Icon(
+            painter = painterResource(Res.drawable.ic_tomato),
+            contentDescription = "Pomodoros",
+            modifier = Modifier.padding(end = 2.dp)
+        )
+        Text(text = "${purchase.price}")
+    }
+}
+
+@Composable
+private fun DateText(purchase: PurchaseItem) {
+    Text(
+        text = purchase.formattedDate,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(top = 4.dp)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UsedCheckbox(
+    purchase: PurchaseItem,
+    state: PurchaseHistoryState,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+            Checkbox(
+                checked = purchase.used,
+                onCheckedChange = { isChecked ->
+                    state.eventSink(UpdateUsedStatus(purchase.purchaseId, isChecked))
+                }
+            )
+        }
+        Text(
+            text = stringResource(Res.string.purchase_history_used),
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 
@@ -105,14 +162,18 @@ fun PurchaseHistoryScreenPreview() {
     PurchaseHistoryUI(state = PurchaseHistoryState(
         purchases = listOf(
             PurchaseItem(
+                purchaseId = 1,
                 productName = "Product 1",
                 price = 10,
-                formattedDate = "2021-01-01"
+                formattedDate = "2021-01-01",
+                used = false
             ),
             PurchaseItem(
+                purchaseId = 2,
                 productName = "Product Product Product Product Product 1",
                 price = 10,
-                formattedDate = "2021-01-01"
+                formattedDate = "2021-01-01",
+                used = true
             ),
         )
     ) {})

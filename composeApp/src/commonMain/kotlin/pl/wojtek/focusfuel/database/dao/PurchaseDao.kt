@@ -23,9 +23,12 @@ interface PurchaseDao {
     fun getTotalSpendings(): Flow<Int?>
 
     @Query("""
-        SELECT pu.id AS purchaseId, pu.productId, p.name AS productName, pu.date, p.costInPomodoros
+        SELECT pu.id AS purchaseId, pu.productId, p.name AS productName, pu.date, p.costInPomodoros, pu.used
         FROM PurchaseEntity pu 
         JOIN ProductEntity p ON pu.productId = p.id
     """)
     fun getAllPurchasesWithProducts(): Flow<List<PurchaseWithProduct>>
+
+    @Query("UPDATE PurchaseEntity SET used = :used WHERE id = :purchaseId")
+    suspend fun updateUsedStatus(purchaseId: Int, used: Boolean)
 }

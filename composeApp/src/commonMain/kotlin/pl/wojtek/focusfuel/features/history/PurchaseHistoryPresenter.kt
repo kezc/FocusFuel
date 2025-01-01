@@ -7,6 +7,7 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.repository.Purchase
@@ -18,6 +19,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface PurchaseHistoryEvent : CircuitUiEvent {
     data object Close : PurchaseHistoryEvent
+    data class UpdateUsedStatus(val purchaseId: Int, val used: Boolean) : PurchaseHistoryEvent
 }
 
 data class PurchaseHistoryState(
@@ -41,6 +43,9 @@ class PurchaseHistoryPresenter(
             eventSink = asyncEventSink { event ->
                 when (event) {
                     PurchaseHistoryEvent.Close -> navigator.pop()
+                    is PurchaseHistoryEvent.UpdateUsedStatus -> launch {
+                        shopRepository.updatePurchaseUsedStatus(event.purchaseId, event.used)
+                    }
                 }
             }
         )
@@ -48,15 +53,19 @@ class PurchaseHistoryPresenter(
 
     private fun List<Purchase>.toListItem() = map { purchase ->
         PurchaseItem(
+            purchaseId = purchase.purchaseId,
             productName = purchase.productName,
             formattedDate = dateTimeFormatter.getFormattedDate(purchase.date),
-            price = purchase.costInPomodoros
+            price = purchase.costInPomodoros,
+            used = purchase.used
         )
     }
 }
 
 data class PurchaseItem(
+    val purchaseId: Int,
     val productName: String,
     val formattedDate: String,
-    val price: Int
+    val price: Int,
+    val used: Boolean
 )

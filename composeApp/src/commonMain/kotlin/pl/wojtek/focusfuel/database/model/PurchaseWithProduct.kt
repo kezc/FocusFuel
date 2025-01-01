@@ -7,5 +7,6 @@ data class PurchaseWithProduct(
     val productId: Long,
     val productName: String,
     val date: LocalDateTime,
-    val costInPomodoros: Int
+    val costInPomodoros: Int,
+    val used: Boolean
 ) 

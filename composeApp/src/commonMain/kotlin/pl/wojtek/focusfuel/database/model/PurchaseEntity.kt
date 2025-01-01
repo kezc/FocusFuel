@@ -9,5 +9,6 @@ import kotlinx.datetime.LocalDateTime
 data class PurchaseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val productId: Long,
-    val date: LocalDateTime
+    val date: LocalDateTime,
+    val used: Boolean = false
 )

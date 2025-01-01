@@ -23,6 +23,7 @@ interface ShopRepository {
     fun getPurchases(): Flow<List<Purchase>>
     suspend fun addProduct(name: String, costInPomodoros: Int)
     suspend fun hideProduct(product: Product)
+    suspend fun updatePurchaseUsedStatus(purchaseId: Int, used: Boolean)
 }
 
 @Inject
@@ -61,7 +62,8 @@ class ShopRepositoryImpl(
                     productId = it.productId,
                     productName = it.productName,
                     date = it.date,
-                    costInPomodoros = it.costInPomodoros
+                    costInPomodoros = it.costInPomodoros,
+                    used = it.used
                 )
             }
         }
@@ -92,6 +94,10 @@ class ShopRepositoryImpl(
             )
         )
     }
+
+    override suspend fun updatePurchaseUsedStatus(purchaseId: Int, used: Boolean) {
+        purchaseDao.updateUsedStatus(purchaseId, used)
+    }
 }
 
 @CommonParcelize
@@ -106,5 +112,6 @@ data class Purchase(
     val productId: Long,
     val productName: String,
     val date: LocalDateTime,
-    val costInPomodoros: Int
+    val costInPomodoros: Int,
+    val used: Boolean
 )
