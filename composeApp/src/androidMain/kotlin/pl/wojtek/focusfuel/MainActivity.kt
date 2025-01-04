@@ -16,7 +16,7 @@ import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
-import pl.wojtek.focusfuel.features.counter.CounterScreen
+import pl.wojtek.focusfuel.mainscreen.MainScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -33,11 +33,8 @@ class MainActivity : ComponentActivity() {
         permissionUtil.askNotificationPermission()
 
         setContent {
-            val backstack = rememberSaveableBackStack(CounterScreen)
-
-            val navigator = rememberCircuitNavigator(
-                backStack = backstack,
-            )
+            val backstack = rememberSaveableBackStack(MainScreen)
+            val navigator = rememberCircuitNavigator(backStack = backstack)
 
             App(circuit, backstack, navigator)
         }

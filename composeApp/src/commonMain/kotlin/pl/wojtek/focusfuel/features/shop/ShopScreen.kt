@@ -43,13 +43,11 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.shop.ShopEvent.Buy
-import pl.wojtek.focusfuel.features.shop.ShopEvent.Close
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPomodoro
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPurchaseHistory
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
-import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.ui.ShowAnimatedText
 import pl.wojtek.focusfuel.ui.unboundedClickable
@@ -79,9 +77,6 @@ fun ShopUI(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.shop_title)) },
-                navigationIcon = {
-                    AppCloseIcon(onClick = { state.eventSink(Close) })
-                },
                 actions = {
                     PomodorosBalanceIcon(state)
                     HistoryIcon(state.eventSink)

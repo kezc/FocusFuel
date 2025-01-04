@@ -37,9 +37,7 @@ import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.Close
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
-import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -64,9 +62,6 @@ fun PurchaseHistoryUI(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.purchase_history_title)) },
-                navigationIcon = {
-                    AppCloseIcon(onClick = { state.eventSink(Close) })
-                }
             )
         },
         modifier = modifier

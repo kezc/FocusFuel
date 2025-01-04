@@ -21,7 +21,7 @@ import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
-import pl.wojtek.focusfuel.features.counter.CounterScreen
+import pl.wojtek.focusfuel.mainscreen.MainScreen
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -35,7 +35,7 @@ fun main() = application {
             position = WindowPosition(Alignment.Center),
         )
     val circuit = remember { AppComponent::class.create().circuit }
-    val backstack = rememberSaveableBackStack(CounterScreen)
+    val backstack = rememberSaveableBackStack(MainScreen)
     NotifierManager.initialize(
         NotificationPlatformConfiguration.Desktop(
             showPushNotification = true,

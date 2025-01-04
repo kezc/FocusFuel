@@ -18,7 +18,6 @@ import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface PurchaseHistoryEvent : CircuitUiEvent {
-    data object Close : PurchaseHistoryEvent
     data class UpdateUsedStatus(val purchaseId: Int, val used: Boolean) : PurchaseHistoryEvent
 }
 
@@ -42,7 +41,6 @@ class PurchaseHistoryPresenter(
             purchases = purchases.toListItem(),
             eventSink = asyncEventSink { event ->
                 when (event) {
-                    PurchaseHistoryEvent.Close -> navigator.pop()
                     is PurchaseHistoryEvent.UpdateUsedStatus -> launch {
                         shopRepository.updatePurchaseUsedStatus(event.purchaseId, event.used)
                     }

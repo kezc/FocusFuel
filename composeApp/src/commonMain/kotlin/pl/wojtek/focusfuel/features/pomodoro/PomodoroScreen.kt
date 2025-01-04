@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
@@ -21,18 +22,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,11 +43,9 @@ import focusfuel.composeapp.generated.resources.pomodoro_long_break
 import focusfuel.composeapp.generated.resources.pomodoro_reset_button_description
 import focusfuel.composeapp.generated.resources.pomodoro_short_break
 import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -65,7 +60,6 @@ class PomodoroUI : Ui<PomodoroState> {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
     val backgroundColor = when (state.currentPhase) {
@@ -77,23 +71,16 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = backgroundColor,
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor),
-                title = { },
-                navigationIcon = {
-                    AppCloseIcon(onClick = { state.eventSink(PomodoroEvent.Back) })
-                }
-            )
-        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier.padding(paddingValues).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.Center
             ) {
                 PhaseIndicator(state.currentPhase)
+                Spacer(Modifier.height(16.dp))
                 TimerDisplay(state.timerDisplay)
+                Spacer(Modifier.height(16.dp))
                 ControlButtons(state)
             }
         }

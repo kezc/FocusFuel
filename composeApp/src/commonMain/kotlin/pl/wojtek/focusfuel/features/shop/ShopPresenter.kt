@@ -26,7 +26,6 @@ import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface ShopEvent : CircuitUiEvent {
-    data object Close : ShopEvent
     data class Buy(val product: Product) : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
     data object NavigateToPomodoro : ShopEvent
@@ -75,8 +74,6 @@ class ShopPresenter(
                         val success = shopRepository.makePurchase(event.product)
                         orderResult = getOrderResult(success)
                     }
-
-                    Close -> navigator.pop()
 
                     NavigateToPurchaseHistory ->
                         navigator.goTo(PurchaseHistoryScreen)

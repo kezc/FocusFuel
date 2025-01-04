@@ -10,5 +10,8 @@
     <string name="shop_insufficient_pomodoros">Insufficient Pomodoros</string>
     <string name="pomodoro_reset_button_description">Reset</string>
     <string name="pomodoro_skip_button_description">Skip</string>
+    <string name="bottom_bar_pomodoro">Pomodoro</string>
+    <string name="bottom_bar_purchases">Purchases</string>
+    <string name="bottom_bar_shop">Shop</string>
 
 </resources>
