@@ -81,17 +81,18 @@ fun ShopUI(
                 title = { Text(stringResource(Res.string.shop_title)) },
                 actions = {
                     PomodorosBalanceIcon(state)
-                    HistoryIcon(state.eventSink)
+                    AddProductIcon(state.eventSink)
                 }
             )
         },
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding.withoutBottom())
         ) {
+
             ShowAnimatedText(state.orderResult?.toText(), {
                 Text(
                     text = it,
@@ -106,15 +107,13 @@ fun ShopUI(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {
                 state.products.forEach { product ->
-                    item(key = product.id) { ProductCard(product, state.eventSink) }
+                    item(key = product.id, contentType = Product::class) { ProductCard(product, state.eventSink) }
                 }
-                item(key = "add_new") {
-                    AddNewProductCard(state.eventSink)
-                }
+                item { AddNewProductCard(state.eventSink) }
             }
 
         }
@@ -168,17 +167,6 @@ private fun PomodorosBalanceIcon(
     }
 }
 
-@Composable
-private fun HistoryIcon(
-    eventSink: (ShopEvent) -> Unit
-) {
-    AppIconButton(
-        onClick = { eventSink(NavigateToPurchaseHistory) },
-        imageVector = Icons.Filled.History,
-        contentDescription = "Purchase History"
-    )
-}
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProductCard(
@@ -189,7 +177,6 @@ private fun ProductCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { eventSink(Buy(product)) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp),

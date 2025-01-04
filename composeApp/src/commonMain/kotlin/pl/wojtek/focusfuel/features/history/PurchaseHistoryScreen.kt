@@ -90,7 +90,6 @@ private fun PurchaseItem(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
