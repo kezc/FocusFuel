@@ -1,5 +1,6 @@
 package pl.wojtek.focusfuel.features.pomodoro
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -62,15 +62,17 @@ class PomodoroUI : Ui<PomodoroState> {
 
 @Composable
 private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
-    val backgroundColor = when (state.currentPhase) {
-        PomodoroPhase.WORK -> MaterialTheme.colorScheme.primaryContainer
-        PomodoroPhase.SHORT_BREAK -> MaterialTheme.colorScheme.secondaryContainer
-        PomodoroPhase.LONG_BREAK -> MaterialTheme.colorScheme.tertiaryContainer
-    }
+    val backgroundColor = animateColorAsState(
+        when (state.currentPhase) {
+            PomodoroPhase.WORK -> MaterialTheme.colorScheme.primaryContainer
+            PomodoroPhase.SHORT_BREAK -> MaterialTheme.colorScheme.secondaryContainer
+            PomodoroPhase.LONG_BREAK -> MaterialTheme.colorScheme.tertiaryContainer
+        }
+    )
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = backgroundColor,
+        containerColor = backgroundColor.value,
         content = { paddingValues ->
             Column(
                 modifier = Modifier.padding(paddingValues).fillMaxSize(),
