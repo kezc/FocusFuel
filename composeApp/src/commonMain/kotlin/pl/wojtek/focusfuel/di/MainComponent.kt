@@ -17,7 +17,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @ContributesTo(AppScope::class)
 interface MainComponent {
     val pomodoroTimer: PomodoroTimer
-    val pomodoroNotificationsManager: PomodoroNotificationsManager
+    val pomodoroNotificationsManager: Lazy<PomodoroNotificationsManager>
     val presenterFactories: Set<Presenter.Factory>
     val uiFactories: Set<Ui.Factory>
     val circuit: Circuit

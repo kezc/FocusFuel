@@ -8,4 +8,5 @@
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="timer_channel">Pomodoro Timer Channel</string>
+    <string name="pomodoro_channel">Pomodoro Phases Channel</string>
 </resources>

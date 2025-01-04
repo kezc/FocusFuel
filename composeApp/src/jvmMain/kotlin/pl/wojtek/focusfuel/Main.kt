@@ -32,7 +32,6 @@ fun main() = application {
             position = WindowPosition(Alignment.Center),
         )
     val appComponent = remember { AppComponent::class.create() }
-    appComponent.pomodoroNotificationsManager.init()
     val backstack = rememberSaveableBackStack(MainScreen)
     NotifierManager.initialize(
         NotificationPlatformConfiguration.Desktop(
@@ -40,6 +39,7 @@ fun main() = application {
             notificationIconPath = composeDesktopResourcesPath() + File.separator + "notification_icon.png"
         )
     )
+    appComponent.pomodoroNotificationsManager.value.init()
 
     Window(
         title = "FocusFuel",

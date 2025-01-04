@@ -31,6 +31,8 @@ class PomodoroTimer(
 ) {
     private val _state = MutableStateFlow(PomodoroTimerState())
     val state: StateFlow<PomodoroTimerState> = _state.asStateFlow()
+    private val _phaseFinished = MutableStateFlow<PomodoroPhase?>(null)
+    val phaseFinished: StateFlow<PomodoroPhase?> = _phaseFinished.asStateFlow()
 
     private var timerJob: Job? = null
     private var lastUpdate: Long = timestampProvider.getTimestamp()
@@ -101,7 +103,9 @@ class PomodoroTimer(
         lastUpdate = currentTimestamp
         return if (newTimeRemaining <= 0) {
             persistIfFinishedPomodoro(currentState)
-            currentState.transitionToNextState()
+            val newState = currentState.transitionToNextState()
+            _phaseFinished.value = newState.currentPhase
+            newState
         } else {
             currentState.copy(timeRemainingMs = newTimeRemaining)
         }

@@ -16,7 +16,14 @@ class FocusFuelApp : Application() {
             configuration = NotificationPlatformConfiguration.Android(
                 notificationIconResId = R.drawable.ic_launcher_foreground,
                 showPushNotification = false,
+                notificationChannelData = NotificationPlatformConfiguration.Android.NotificationChannelData(
+                    id = "PomodoroChannel",
+                    name = getString(R.string.pomodoro_channel),
+                )
             )
         )
+
+        appComponent.pomodoroNotificationsManager.value.init()
+
     }
 }
