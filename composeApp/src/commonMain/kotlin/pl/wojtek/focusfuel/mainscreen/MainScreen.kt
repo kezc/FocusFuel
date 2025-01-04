@@ -4,8 +4,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Note
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Note
+import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,8 +27,10 @@ import focusfuel.composeapp.generated.resources.Res
 import focusfuel.composeapp.generated.resources.bottom_bar_pomodoro
 import focusfuel.composeapp.generated.resources.bottom_bar_purchases
 import focusfuel.composeapp.generated.resources.bottom_bar_shop
+import focusfuel.composeapp.generated.resources.ic_tomato
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
 import pl.wojtek.focusfuel.features.pomodoro.PomodoroScreen
 import pl.wojtek.focusfuel.features.shop.ShopScreen
@@ -38,10 +44,10 @@ data object MainScreen : Screen
 
 val NAV_ITEMS = persistentListOf(BottomNavTab.Pomodoro, BottomNavTab.Shop, BottomNavTab.Purchases)
 
-enum class BottomNavTab(val screen: Screen, val icon: ImageVector) {
-    Pomodoro(PomodoroScreen, Icons.Filled.Home),
-    Shop(ShopScreen, Icons.Filled.Info),
-    Purchases(PurchaseHistoryScreen, Icons.Filled.Info)
+enum class BottomNavTab(val screen: Screen) {
+    Pomodoro(PomodoroScreen),
+    Shop(ShopScreen),
+    Purchases(PurchaseHistoryScreen)
 }
 
 @CircuitInject(screen = MainScreen::class, scope = AppScope::class)
@@ -77,8 +83,13 @@ private fun BottomNavigationBar(selectedTab: BottomNavTab, onSelectedTab: (Botto
                     BottomNavTab.Purchases -> Res.string.bottom_bar_purchases
                 }
             )
+            val icon = when (item) {
+                BottomNavTab.Pomodoro -> vectorResource(Res.drawable.ic_tomato)
+                BottomNavTab.Shop -> Icons.Outlined.Payment
+                BottomNavTab.Purchases -> Icons.Outlined.History
+            }
             NavigationBarItem(
-                icon = { Icon(imageVector = item.icon, contentDescription = text) },
+                icon = { Icon(imageVector = icon, contentDescription = text) },
                 label = { Text(text = text) },
                 alwaysShowLabel = true,
                 selected = selectedTab == item,
