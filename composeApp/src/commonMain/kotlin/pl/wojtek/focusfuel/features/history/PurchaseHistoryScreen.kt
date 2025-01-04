@@ -3,12 +3,15 @@ package pl.wojtek.focusfuel.features.history
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +41,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
+import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -60,36 +64,48 @@ fun PurchaseHistoryUI(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(Res.string.purchase_history_title)) },
-            )
+            TopAppBar(title = { Text(stringResource(Res.string.purchase_history_title)) })
         },
         modifier = modifier
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding.withoutBottom()),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
             state.purchases.forEach { purchase ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Row(modifier = Modifier.width(IntrinsicSize.Max)) {
-                                NameText(purchase)
-                                Spacer(modifier = Modifier.width(4.dp))
-                                PriceText(purchase)
-                            }
-                            DateText(purchase)
-                        }
-                        UsedCheckbox(purchase, state)
-                    }
-                }
+                item(purchase.purchaseId) { PurchaseItem(purchase, state.eventSink) }
             }
+        }
+    }
+}
+
+@Composable
+private fun PurchaseItem(
+    purchase: PurchaseItem,
+    eventSink: (PurchaseHistoryEvent) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Row(modifier = Modifier.width(IntrinsicSize.Max)) {
+                    NameText(purchase)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    PriceText(purchase)
+                }
+                DateText(purchase)
+            }
+            UsedCheckbox(purchase, eventSink)
         }
     }
 }
@@ -126,11 +142,10 @@ private fun DateText(purchase: PurchaseItem) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UsedCheckbox(
     purchase: PurchaseItem,
-    state: PurchaseHistoryState,
+    eventSink: (PurchaseHistoryEvent) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -140,7 +155,7 @@ private fun UsedCheckbox(
             Checkbox(
                 checked = purchase.used,
                 onCheckedChange = { isChecked ->
-                    state.eventSink(UpdateUsedStatus(purchase.purchaseId, isChecked))
+                    eventSink(UpdateUsedStatus(purchase.purchaseId, isChecked))
                 }
             )
         }

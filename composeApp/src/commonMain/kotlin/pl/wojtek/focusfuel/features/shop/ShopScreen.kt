@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +52,7 @@ import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.ui.ShowAnimatedText
 import pl.wojtek.focusfuel.ui.unboundedClickable
+import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -85,12 +87,17 @@ fun ShopUI(
         },
         modifier = modifier
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding.withoutBottom())
+                .padding(horizontal = 16.dp)
+        ) {
             ShowAnimatedText(state.orderResult?.toText(), {
                 Text(
                     text = it,
                     modifier = Modifier
-                        .padding(bottom = 16.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
@@ -100,7 +107,8 @@ fun ShopUI(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(16.dp)
             ) {
                 state.products.forEach { product ->
                     item(key = product.id) { ProductCard(product, state.eventSink) }

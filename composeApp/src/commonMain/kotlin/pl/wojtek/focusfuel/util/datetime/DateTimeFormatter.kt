@@ -1,23 +1,26 @@
 package pl.wojtek.focusfuel.util.datetime
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format.char
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DateTimeFormatter {
 
-    fun getFormattedDate(date: LocalDateTime): String {
-        val day = date.dayOfMonth
-        val month = date.monthNumber
-        val year = date.year
+    fun getFormattedDateTime(date: LocalDateTime): String {
+        val format = LocalDateTime.Format {
+            hour()
+            char(':')
+            minute()
 
-        return "${day.withPaddedZeros(2)}.${month.withPaddedZeros(2)}.${year}"
-    }
+            char(' ')
 
-    private fun Int.withPaddedZeros(maxLength: Int): String {
-        if (this < 0 || maxLength < 1) return ""
-
-        val string = this.toString()
-        return string.padStart(maxLength, '0')
+            dayOfMonth()
+            char('.')
+            monthNumber()
+            char('.')
+            year()
+        }
+        return format.format(date)
     }
 }

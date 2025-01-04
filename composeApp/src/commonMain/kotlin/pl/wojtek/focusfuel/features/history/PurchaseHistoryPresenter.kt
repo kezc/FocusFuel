@@ -53,7 +53,7 @@ class PurchaseHistoryPresenter(
         PurchaseItem(
             purchaseId = purchase.purchaseId,
             productName = purchase.productName,
-            formattedDate = dateTimeFormatter.getFormattedDate(purchase.date),
+            formattedDate = dateTimeFormatter.getFormattedDateTime(purchase.date),
             price = purchase.costInPomodoros,
             used = purchase.used
         )
