@@ -1,5 +1,6 @@
 package pl.wojtek.focusfuel.features.shop
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -23,9 +25,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +56,9 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPurchaseHistory
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
+import pl.wojtek.focusfuel.ui.AppSnackbarHost
 import pl.wojtek.focusfuel.ui.ShowAnimatedText
+import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.ui.unboundedClickable
 import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
@@ -75,6 +83,14 @@ fun ShopUI(
     modifier: Modifier = Modifier,
     state: ShopState,
 ) {
+    val snackbarHostState = rememberSnackbarHostState()
+
+    val orderResult = state.orderResult?.toText()
+    LaunchedEffect(orderResult) {
+        if (orderResult != null) {
+            snackbarHostState.showSnackbar(orderResult)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,37 +101,19 @@ fun ShopUI(
                 }
             )
         },
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding.withoutBottom())
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding.withoutBottom()),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(16.dp)
         ) {
-
-            ShowAnimatedText(state.orderResult?.toText(), {
-                Text(
-                    text = it,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
-                )
-            }, 2000)
-
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-                state.products.forEach { product ->
-                    item(key = product.id, contentType = Product::class) { ProductCard(product, state.eventSink) }
-                }
-                item { AddNewProductCard(state.eventSink) }
+            state.products.forEach { product ->
+                item(key = product.id, contentType = Product::class) { ProductCard(product, state.eventSink) }
             }
-
+            item { AddNewProductCard(state.eventSink) }
         }
     }
 }
