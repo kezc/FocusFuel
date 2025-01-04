@@ -1,6 +1,7 @@
 package pl.wojtek.focusfuel.repository
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -15,7 +16,7 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
 interface PomodorosRepository {
     fun addPomodoro(date: LocalDateTime = currentLocalDateTime())
-    suspend fun getTotalPomodorosFinished(): Int
+    fun getTotalPomodorosFinished(): Flow<Int>
 }
 
 @Inject
@@ -31,10 +32,7 @@ class PomodorosRepositoryImpl(
         }
     }
 
-    override suspend fun getTotalPomodorosFinished(): Int {
-        return pomodoroDao.count()
-    }
-
+    override fun getTotalPomodorosFinished(): Flow<Int> =pomodoroDao.count()
 }
 
 fun currentLocalDateTime() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())

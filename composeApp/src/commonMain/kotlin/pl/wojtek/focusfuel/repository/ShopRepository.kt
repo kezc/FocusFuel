@@ -1,6 +1,7 @@
 package pl.wojtek.focusfuel.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDateTime
@@ -44,7 +45,7 @@ class ShopRepositoryImpl(
         }
 
     override suspend fun makePurchase(product: Product): Boolean {
-        val totalPomodoros = pomodorosRepository.getTotalPomodorosFinished() - getTotalSpendings().first()
+        val totalPomodoros = pomodorosRepository.getTotalPomodorosFinished().first() - getTotalSpendings().first()
         return if (totalPomodoros >= product.costInPomodoros) {
             purchaseDao.insert(PurchaseEntity(productId = product.id, date = currentLocalDateTime()))
             true
@@ -69,8 +70,10 @@ class ShopRepositoryImpl(
         }
 
     override fun pomodoroBalance(): Flow<Int> =
-        getTotalSpendings()
-            .map { pomodorosRepository.getTotalPomodorosFinished() - it }
+        combine(
+            pomodorosRepository.getTotalPomodorosFinished(),
+            getTotalSpendings(),
+        ) { pomodoros, spendings -> pomodoros - spendings }
 
     private fun getTotalSpendings(): Flow<Int> = purchaseDao
         .getTotalSpendings().map { it ?: 0 }

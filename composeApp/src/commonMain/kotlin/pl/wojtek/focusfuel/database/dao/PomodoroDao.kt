@@ -12,7 +12,7 @@ interface PomodoroDao {
     suspend fun insert(item: PomodoroEntity)
 
     @Query("SELECT count(*) FROM PomodoroEntity")
-    suspend fun count(): Int
+    fun count(): Flow<Int>
 
     @Query("SELECT * FROM PomodoroEntity")
     fun getAllAsFlow(): Flow<List<PomodoroEntity>>
