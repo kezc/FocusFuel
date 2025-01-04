@@ -91,13 +91,12 @@ fun ShopUI(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding.withoutBottom())
-                .padding(horizontal = 16.dp)
         ) {
             ShowAnimatedText(state.orderResult?.toText(), {
                 Text(
                     text = it,
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(16.dp)
                         .fillMaxWidth(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
