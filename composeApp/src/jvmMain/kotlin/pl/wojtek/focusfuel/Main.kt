@@ -14,10 +14,7 @@ import com.mmk.kmpnotifier.extensions.composeDesktopResourcesPath
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
@@ -34,7 +31,8 @@ fun main() = application {
             height = 800.dp,
             position = WindowPosition(Alignment.Center),
         )
-    val circuit = remember { AppComponent::class.create().circuit }
+    val appComponent = remember { AppComponent::class.create() }
+    appComponent.pomodoroNotificationsManager.init()
     val backstack = rememberSaveableBackStack(MainScreen)
     NotifierManager.initialize(
         NotificationPlatformConfiguration.Desktop(
@@ -49,7 +47,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication
     ) {
         App(
-            circuit = circuit,
+            circuit = appComponent.circuit,
             backstack = backstack,
             navigator = rememberCircuitNavigator(
                 backStack = backstack,
@@ -63,19 +61,6 @@ fun main() = application {
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
 abstract class AppComponent : AppComponentMerged {
-    abstract val presenterFactories: Set<Presenter.Factory>
-    abstract val uiFactories: Set<Ui.Factory>
-    abstract val circuit: Circuit
-
-    @SingleIn(AppScope::class)
-    @Provides
-    fun circuit(presenterFactories: Set<Presenter.Factory>, uiFactories: Set<Ui.Factory>): Circuit {
-        return Circuit.Builder()
-            .addPresenterFactories(presenterFactories)
-            .addUiFactories(uiFactories)
-            .build()
-    }
-
     @Provides
     fun provideDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
         val dbFilePath = File(System.getProperty("java.io.tmpdir"), "focusfuel/my_mroom.db").absolutePath

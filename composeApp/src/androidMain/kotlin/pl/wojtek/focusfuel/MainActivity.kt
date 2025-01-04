@@ -9,10 +9,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.mmk.kmpnotifier.permission.permissionUtil
 import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.ui.Ui
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
@@ -47,19 +44,7 @@ class MainActivity : ComponentActivity() {
 abstract class AppComponent(
     @get:Provides val context: Context
 ) : AppComponentMerged {
-    abstract val presenterFactories: Set<Presenter.Factory>
-    abstract val uiFactories: Set<Ui.Factory>
-    abstract val circuit: Circuit
     abstract val pomodoroServiceManager: PomodoroServiceManager
-
-    @SingleIn(AppScope::class)
-    @Provides
-    fun circuit(presenterFactories: Set<Presenter.Factory>, uiFactories: Set<Ui.Factory>): Circuit {
-        return Circuit.Builder()
-            .addPresenterFactories(presenterFactories)
-            .addUiFactories(uiFactories)
-            .build()
-    }
 
     @Provides
     fun provideDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AppDatabase> {
