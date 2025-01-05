@@ -13,14 +13,14 @@ import pl.wojtek.focusfuel.util.either.EitherT
 
 @Composable
 fun <T> rememberDisappearingState(delayMs: Long = 3000): MutableState<T?> {
-    val error = remember { mutableStateOf<T?>(null) }
-    LaunchedEffect(error) {
-        if (error.value != null) {
+    val state = remember { mutableStateOf<T?>(null) }
+    LaunchedEffect(state.value) {
+        if (state.value != null) {
             delay(delayMs)
-            error.value = null
+            state.value = null
         }
     }
-    return error
+    return state
 }
 
 fun <T> Flow<EitherT<T>>.observeError(state: MutableState<Throwable?>): Flow<EitherT<T>> =

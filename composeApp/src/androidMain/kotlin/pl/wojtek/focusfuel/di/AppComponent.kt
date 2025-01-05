@@ -5,7 +5,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import pl.wojtek.focusfuel.AppComponentMerged
 import pl.wojtek.focusfuel.PomodoroServiceManager
 import pl.wojtek.focusfuel.database.AppDatabase
 import pl.wojtek.focusfuel.notifications.NotificationSender
