@@ -8,8 +8,8 @@ import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.AppComponentMerged
 import pl.wojtek.focusfuel.PomodoroServiceManager
 import pl.wojtek.focusfuel.database.AppDatabase
-import pl.wojtek.focusfuel.notification.BackgroundNotificationSender
 import pl.wojtek.focusfuel.notifications.NotificationSender
+import pl.wojtek.focusfuel.notifications.SimpleNotificationSender
 import pl.wojtek.focusfuel.util.AppInForegroundNotifier
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
@@ -25,8 +25,9 @@ abstract class AppComponent(
     abstract val appInForegroundNotifier: AppInForegroundNotifier
 
     @Provides
-    fun provideNotificationSender(backgroundNotificationSender: BackgroundNotificationSender) : NotificationSender =
-        backgroundNotificationSender
+    fun provideNotificationSender(
+        simpleNotificationSender: SimpleNotificationSender
+    ): NotificationSender = simpleNotificationSender
 
     @Provides
     fun provideDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AppDatabase> {
