@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -64,29 +63,50 @@ fun AddProductUI(
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            AppOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.name,
-                onValueChange = { state.eventSink(AddProductEvent.SetName(it)) },
-                label = { Text(stringResource(Res.string.add_product_name_label)) },
-                error = state.nameError?.toText(),
-            )
+            NameTextField(state)
             Spacer(modifier = Modifier.height(2.dp))
-            AppOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.price,
-                onValueChange = { state.eventSink(AddProductEvent.SetPrice(it)) },
-                label = { Text(stringResource(Res.string.add_product_price_label)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                error = state.priceError?.toText(),
-            )
+            PriceTextField(state)
             Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { state.eventSink(AddProductEvent.Add) }) {
-                Text(stringResource(Res.string.add_product_button_label))
-            }
+            SubmitButton(state)
         }
+    }
+}
+
+@Composable
+private fun NameTextField(
+    state: AddProductState,
+) {
+    AppOutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = state.name,
+        onValueChange = { state.eventSink(AddProductEvent.SetName(it)) },
+        label = { Text(stringResource(Res.string.add_product_name_label)) },
+        error = state.nameError?.toText(),
+    )
+}
+
+@Composable
+private fun PriceTextField(
+    state: AddProductState,
+) {
+    AppOutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = state.price,
+        onValueChange = { state.eventSink(AddProductEvent.SetPrice(it)) },
+        label = { Text(stringResource(Res.string.add_product_price_label)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        error = state.priceError?.toText(),
+    )
+}
+
+@Composable
+private fun SubmitButton(
+    state: AddProductState,
+) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = { state.eventSink(AddProductEvent.Add) }) {
+        Text(stringResource(Res.string.add_product_button_label))
     }
 }
 
