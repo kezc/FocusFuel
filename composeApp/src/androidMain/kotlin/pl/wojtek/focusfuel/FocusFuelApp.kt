@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import pl.wojtek.focusfuel.di.AppComponent
 
 class FocusFuelApp : Application() {
     lateinit var appComponent: AppComponent
