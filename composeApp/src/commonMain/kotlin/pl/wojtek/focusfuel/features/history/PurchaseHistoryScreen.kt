@@ -4,21 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,22 +24,20 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
-import focusfuel.composeapp.generated.resources.ic_tomato
 import focusfuel.composeapp.generated.resources.purchase_history_no_purchases_available
 import focusfuel.composeapp.generated.resources.purchase_history_title
 import focusfuel.composeapp.generated.resources.purchase_history_used
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
 import pl.wojtek.focusfuel.ui.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.ProductName
 import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
 import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.ui.withoutBottom
@@ -137,39 +130,14 @@ private fun PurchaseItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Row(modifier = Modifier.width(IntrinsicSize.Max)) {
-                    NameText(purchase)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    PriceText(purchase)
-                }
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                ProductName(price = purchase.price, productName = purchase.productName,)
                 DateText(purchase)
             }
             UsedCheckbox(purchase, eventSink)
         }
-    }
-}
-
-@Composable
-private fun RowScope.NameText(purchase: PurchaseItem) {
-    Text(
-        modifier = Modifier.Companion.weight(1f),
-        text = purchase.productName,
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
-}
-
-@Composable
-private fun PriceText(purchase: PurchaseItem) {
-    Row {
-        Icon(
-            painter = painterResource(Res.drawable.ic_tomato),
-            contentDescription = "Pomodoros",
-            modifier = Modifier.padding(end = 2.dp)
-        )
-        Text(text = "${purchase.price}")
     }
 }
 
@@ -209,25 +177,26 @@ private fun UsedCheckbox(
 @Preview
 @Composable
 fun PurchaseHistoryScreenPreview() {
-    PurchaseHistoryUI(state = PurchaseHistoryState(
-        purchases = listOf(
-            PurchaseItem(
-                purchaseId = 1,
-                productName = "Product 1",
-                price = 10,
-                formattedDate = "2021-01-01",
-                used = false
+    PurchaseHistoryUI(
+        state = PurchaseHistoryState(
+            purchases = listOf(
+                PurchaseItem(
+                    purchaseId = 1,
+                    productName = "Product 1",
+                    price = 10,
+                    formattedDate = "2021-01-01",
+                    used = false
+                ),
+                PurchaseItem(
+                    purchaseId = 2,
+                    productName = "Product Product Product Product Product 1",
+                    price = 10,
+                    formattedDate = "2021-01-01",
+                    used = true
+                ),
             ),
-            PurchaseItem(
-                purchaseId = 2,
-                productName = "Product Product Product Product Product 1",
-                price = 10,
-                formattedDate = "2021-01-01",
-                used = true
-            ),
-        ),
-        {},
-        null
-    )
+            {},
+            null
+        )
     )
 } 

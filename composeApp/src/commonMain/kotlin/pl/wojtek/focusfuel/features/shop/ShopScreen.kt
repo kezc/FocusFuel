@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
@@ -46,6 +44,7 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.ui.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.ProductName
 import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
 import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.ui.withoutBottom
@@ -160,25 +159,15 @@ private fun ProductCard(
             .clickable { eventSink(SelectProductToBuy(product)) },
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = CenterVertically
         ) {
-            FlowRow(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
+            Box(modifier = Modifier.weight(1f)) {
+                ProductName(
+                    price = product.costInPomodoros,
+                    productName = product.name
                 )
-                Row {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_tomato),
-                        contentDescription = "Pomodoros",
-                        modifier = Modifier.padding(end = 2.dp)
-                    )
-                    Text(text = "${product.costInPomodoros}")
-                }
             }
             MoreOptions(onClick = { eventSink(ShowProductBottomSheet(product)) })
         }
