@@ -40,8 +40,8 @@ import focusfuel.composeapp.generated.resources.shop_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import pl.wojtek.focusfuel.features.shop.ShopEvent.Buy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
+import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
@@ -59,7 +59,8 @@ object ShopScreen : Screen
 class ShopUI : Ui<ShopState> {
     @Composable
     override fun Content(state: ShopState, modifier: Modifier) {
-        ProductBottomSheetHandler(state.showProductBottomSheet, state.eventSink)
+        ProductBottomSheetHandler(state.selectedProductToChange, state.eventSink)
+        ConfirmPurchaseDialogHandler(state.selectedProductToBuy, state.eventSink)
 
         ShopUI(modifier, state)
     }
@@ -73,6 +74,7 @@ fun ShopUI(
 ) {
     val snackbarHostState = rememberSnackbarHostState()
     ShowSnackbarHandler(snackbarHostState, state.orderResult?.toText())
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -155,7 +157,7 @@ private fun ProductCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { eventSink(Buy(product)) },
+            .clickable { eventSink(SelectProductToBuy(product)) },
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp),

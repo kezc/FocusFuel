@@ -19,10 +19,12 @@ import pl.wojtek.focusfuel.features.addproduct.AddProductScreen
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
 import pl.wojtek.focusfuel.features.shop.ShopEvent.Buy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.DeleteProduct
+import pl.wojtek.focusfuel.features.shop.ShopEvent.DismissConfirmation
 import pl.wojtek.focusfuel.features.shop.ShopEvent.HideProductBottomSheet
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToEditProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPurchaseHistory
+import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
@@ -34,7 +36,9 @@ import pl.wojtek.focusfuel.util.either.EitherT
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface ShopEvent : CircuitUiEvent {
+    data class SelectProductToBuy(val product: Product) : ShopEvent
     data class Buy(val product: Product) : ShopEvent
+    data object DismissConfirmation : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
     data object NavigateToAddProduct : ShopEvent
     data class ShowProductBottomSheet(val product: Product) : ShopEvent
@@ -48,7 +52,8 @@ data class ShopState(
     val orderResult: ShopPresenter.OrderResult?,
     val availablePomodoros: Int?,
     val eventSink: (ShopEvent) -> Unit,
-    val showProductBottomSheet: Product?,
+    val selectedProductToChange: Product?,
+    val selectedProductToBuy: Product?,
 ) : CircuitUiState
 
 @CircuitInject(ShopScreen::class, AppScope::class)
@@ -63,19 +68,24 @@ class ShopPresenter(
         val products by shopRepository.getProducts().observeError(error).collectAsStateWithLifecycle(emptyList<Product>().right())
         val balance by shopRepository.pomodoroBalance().observeError(error).collectAsStateWithLifecycle(null as EitherT<Int>?)
         var orderResult: OrderResult? by rememberDisappearingState<OrderResult?>()
-        var showProductBottomSheet by remember { mutableStateOf<Product?>(null) }
+        var selectedProductToChange by remember { mutableStateOf<Product?>(null) }
+        var selectedProductToBuy by remember { mutableStateOf<Product?>(null) }
 
         return ShopState(
             products = products.getOrElse { emptyList() },
             orderResult = orderResult,
             availablePomodoros = balance?.getOrNull(),
-            showProductBottomSheet = showProductBottomSheet,
+            selectedProductToChange = selectedProductToChange,
+            selectedProductToBuy = selectedProductToBuy,
             eventSink = asyncEventSink { event ->
                 when (event) {
+                    is SelectProductToBuy -> selectedProductToBuy = event.product
+
                     is Buy -> launch {
                         shopRepository.makePurchase(event.product)
                             .observeError(error)
                             .onRight { orderResult = getOrderResult(it) }
+                        selectedProductToBuy = null
                     }
 
                     NavigateToPurchaseHistory ->
@@ -85,16 +95,18 @@ class ShopPresenter(
                         navigator.goTo(AddProductScreen())
 
                     is NavigateToEditProduct ->
-                        navigator.goTo(AddProductScreen(showProductBottomSheet))
+                        navigator.goTo(AddProductScreen(selectedProductToChange))
 
-                    is ShowProductBottomSheet -> showProductBottomSheet = event.product
+                    is ShowProductBottomSheet -> selectedProductToChange = event.product
 
-                    HideProductBottomSheet -> showProductBottomSheet = null
+                    HideProductBottomSheet -> selectedProductToChange = null
 
                     DeleteProduct -> launch {
-                        shopRepository.hideProduct(showProductBottomSheet!!)
-                        showProductBottomSheet = null
+                        shopRepository.hideProduct(selectedProductToChange!!)
+                        selectedProductToChange = null
                     }
+
+                    DismissConfirmation -> selectedProductToBuy = null
                 }
             }
         )
