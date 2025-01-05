@@ -16,4 +16,8 @@ class SimpleNotificationSender(
             this.id = id
         }
     }
+
+    fun remove(id: Int) {
+        notifier.remove(id)
+    }
 }

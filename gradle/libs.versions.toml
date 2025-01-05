@@ -26,6 +26,7 @@ coroutines = "1.9.0"
 multiplatformSettings = "1.2.0"
 androidx-room = "2.7.0-alpha07"
 androidx-sqlite = "2.5.0-alpha07"
+lifecycleProcess = "2.8.7"
 
 [libraries]
 kmpnotifier = { module = "io.github.mirzemehdi:kmpnotifier", version.ref = "kmpnotifier" }
@@ -72,6 +73,7 @@ kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 
 
 [plugins]

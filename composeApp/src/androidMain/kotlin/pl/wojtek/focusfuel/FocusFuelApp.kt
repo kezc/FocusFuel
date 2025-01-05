@@ -1,6 +1,7 @@
 package pl.wojtek.focusfuel
 
 import android.app.Application
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 
@@ -11,6 +12,7 @@ class FocusFuelApp : Application() {
         super.onCreate()
         appComponent = AppComponent::class.create(this)
         appComponent.pomodoroServiceManager.init()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(appComponent.appInForegroundNotifier)
 
         NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
