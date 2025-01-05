@@ -53,12 +53,7 @@ class PomodoroPresenter(
         var isSoundOn by remember { mutableStateOf(true) }
 
         LaunchedEffect(Unit) {
-            pomodoroTimer.init()
             isSoundOn = appSettings.isSoundEnabled()
-        }
-
-        LaunchedEffect(timerState) {
-            pomodoroTimer.save()
         }
 
         return PomodoroState(

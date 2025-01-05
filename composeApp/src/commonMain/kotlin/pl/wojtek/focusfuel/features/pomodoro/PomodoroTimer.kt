@@ -1,6 +1,5 @@
 package pl.wojtek.focusfuel.features.pomodoro
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,7 +23,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class PomodoroTimer(
-    private val pomodoroSaver: PomodoroSaver,
     private val timestampProvider: TimestampProvider,
     private val coroutineScope: CoroutineScope,
     private val pomodorosRepository: PomodorosRepository,
@@ -37,13 +35,6 @@ class PomodoroTimer(
     private var timerJob: Job? = null
     private var lastUpdate: Long = timestampProvider.getTimestamp()
 
-    fun init() {
-        _state.value = pomodoroSaver.loadState().also { Logger.d { "Loaded state: $it" } }
-        if (state.value.isRunning) {
-            startTimer()
-        }
-    }
-
     fun toggleTimer() {
         val currentState = _state.value
         if (currentState.isRunning) {
@@ -51,10 +42,6 @@ class PomodoroTimer(
         } else {
             startTimer()
         }
-    }
-
-    fun save() {
-        pomodoroSaver.saveState(_state.value).also { Logger.d { "Saved state: ${_state.value}" } }
     }
 
     fun reset() {
