@@ -26,6 +26,7 @@ interface PurchaseDao {
         SELECT pu.id AS purchaseId, pu.productId, p.name AS productName, pu.date, p.costInPomodoros, pu.used
         FROM PurchaseEntity pu 
         JOIN ProductEntity p ON pu.productId = p.id
+        ORDER BY pu.date DESC
     """)
     fun getAllPurchasesWithProducts(): Flow<List<PurchaseWithProduct>>
 

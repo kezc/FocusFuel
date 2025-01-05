@@ -15,7 +15,7 @@ interface ProductDao {
     @Update
     suspend fun update(product: ProductEntity)
 
-    @Query("SELECT * FROM ProductEntity")
+    @Query("SELECT * FROM ProductEntity ORDER BY COALESCE(originalId, id)")
     fun getAll(): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM ProductEntity WHERE id = :productId")

@@ -77,12 +77,17 @@ class AddProductPresenter(
                             launch {
                                 either {
                                     if (initialProduct != null) {
-                                        shopRepository.hideProduct(initialProduct).bind()
-                                    }
-                                    shopRepository.addProduct(
-                                        name = name,
-                                        costInPomodoros = price.toIntOrNull() ?: 0
-                                    ).bind()
+                                        shopRepository.updateProduct(
+                                            initialProduct = initialProduct,
+                                            name = name,
+                                            costInPomodoros = price.toIntOrNull() ?: 0
+                                        )
+                                    } else {
+                                        shopRepository.addProduct(
+                                            name = name,
+                                            costInPomodoros = price.toIntOrNull() ?: 0
+                                        )
+                                    }.bind()
                                 }.onRight { navigator.pop() }
                                     .onLeft { error = it }
                             }

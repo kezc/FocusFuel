@@ -38,16 +38,16 @@ class AppDatabaseCallback : RoomDatabase.Callback() {
         super.onCreate(connection)
         val statement = connection
             .prepare("" +
-                    "INSERT INTO ProductEntity (id, name, costInPomodoros, hidden) VALUES" +
-                    "(1, 'Reward yourself with 1 hour of gaming', 3, 0)," +
-                    "(2, 'Treat yourself to a delicious bar of chocolate', 2, 0)," +
-                    "(3, 'Take a day off from studying or chores', 8, 0)," +
-                    "(4, 'Watch 1 episode of a TV show', 4, 0)," +
-                    "(5, 'Spend 30 minutes on a creative activity', 4, 0)," +
-                    "(6, 'Get a new book', 5, 0)," +
-                    "(7, 'Order your favorite snack or meal', 6, 0)," +
-                    "(8, 'Enjoy a relaxing walk in the park', 6, 0)," +
-                    "(9, 'Treat yourself to a movie or special event', 10, 0);")
+                    "INSERT INTO ProductEntity (id, name, costInPomodoros, hidden, originalId) VALUES" +
+                    "(1, 'Reward yourself with 1 hour of gaming', 3, 0, 1)," +
+                    "(2, 'Treat yourself to a delicious bar of chocolate', 2, 0, 2)," +
+                    "(3, 'Take a day off from studying or chores', 8, 0, 3)," +
+                    "(4, 'Watch 1 episode of a TV show', 4, 0, 4)," +
+                    "(5, 'Spend 30 minutes on a creative activity', 4, 0, 5)," +
+                    "(6, 'Get a new book', 5, 0, 6)," +
+                    "(7, 'Order your favorite snack or meal', 6, 0, 7)," +
+                    "(8, 'Enjoy a relaxing walk in the park', 6, 0, 8)," +
+                    "(9, 'Treat yourself to a movie or special event', 10, 0, 9);")
         while (statement.step());
     }
 }

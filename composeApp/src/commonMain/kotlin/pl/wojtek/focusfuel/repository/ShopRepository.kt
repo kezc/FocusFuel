@@ -28,8 +28,9 @@ interface ShopRepository {
     suspend fun makePurchase(product: Product): EitherT<Boolean>
     fun getPurchases(): Flow<EitherT<List<Purchase>>>
     suspend fun addProduct(name: String, costInPomodoros: Int): EitherT<Unit>
-    suspend fun hideProduct(product: Product): EitherT<Unit>
     suspend fun updatePurchaseUsedStatus(purchaseId: Int, used: Boolean): EitherT<Unit>
+    suspend fun updateProduct(initialProduct: Product, name: String, costInPomodoros: Int): EitherT<Unit>
+    suspend fun hideProduct(product: Product): EitherT<Unit>
 }
 
 @Inject
@@ -89,13 +90,31 @@ class ShopRepositoryImpl(
         .toEither()
         .map { either -> either.map { it ?: 0 } }
 
-    override suspend fun addProduct(name: String, costInPomodoros: Int): EitherT<Unit> = Either.catch {
-        productDao.insert(
+    override suspend fun updateProduct(
+        initialProduct: Product,
+        name: String,
+        costInPomodoros: Int
+    ): EitherT<Unit> = either {
+        hideProduct(initialProduct).bind()
+        insertProduct(
             ProductEntity(
                 name = name,
-                costInPomodoros = costInPomodoros
+                costInPomodoros = costInPomodoros,
+                originalId = initialProduct.id
             )
-        )
+        ).bind()
+    }
+
+    override suspend fun addProduct(name: String, costInPomodoros: Int): EitherT<Unit> = Either.catch {
+        insertProduct(ProductEntity(name = name, costInPomodoros = costInPomodoros))
+    }
+
+    private suspend fun insertProduct(productEntity: ProductEntity): Either<Throwable, Unit> = Either.catch {
+        productDao.insert(productEntity)
+    }
+
+    override suspend fun updatePurchaseUsedStatus(purchaseId: Int, used: Boolean): EitherT<Unit> = Either.catch {
+        purchaseDao.updateUsedStatus(purchaseId, used)
     }
 
     override suspend fun hideProduct(product: Product): EitherT<Unit> = Either.catch {
@@ -107,10 +126,6 @@ class ShopRepositoryImpl(
                 hidden = true
             )
         )
-    }
-
-    override suspend fun updatePurchaseUsedStatus(purchaseId: Int, used: Boolean): EitherT<Unit> = Either.catch {
-        purchaseDao.updateUsedStatus(purchaseId, used)
     }
 }
 

@@ -69,7 +69,7 @@ abstract class AppComponent : AppComponentMerged {
 
     @Provides
     fun provideDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
-        val dbFilePath = File(System.getProperty("java.io.tmpdir"), "focusfuel/my_mroom.db").absolutePath
+        val dbFilePath = File(System.getProperty("java.io.tmpdir"), "focusfuel/database0.db").absolutePath
         Logger.d("DB path: $dbFilePath")
         return Room.databaseBuilder<AppDatabase>(
             name = dbFilePath,

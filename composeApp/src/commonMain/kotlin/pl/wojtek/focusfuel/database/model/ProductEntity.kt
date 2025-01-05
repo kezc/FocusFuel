@@ -8,6 +8,7 @@ data class ProductEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val costInPomodoros: Int,
-    val hidden: Boolean = false
+    val hidden: Boolean = false,
+    val originalId: Long? = null
 )
 
