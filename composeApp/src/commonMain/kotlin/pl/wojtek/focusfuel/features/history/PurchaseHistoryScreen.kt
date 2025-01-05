@@ -1,6 +1,8 @@
 package pl.wojtek.focusfuel.features.history
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,7 @@ import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
 import focusfuel.composeapp.generated.resources.ic_tomato
+import focusfuel.composeapp.generated.resources.purchase_history_no_purchases_available
 import focusfuel.composeapp.generated.resources.purchase_history_title
 import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.painterResource
@@ -68,17 +71,48 @@ fun PurchaseHistoryUI(
         },
         modifier = modifier
     ) { innerPadding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding.withoutBottom()),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(16.dp)
+                .padding(innerPadding.withoutBottom())
         ) {
-            state.purchases.forEach { purchase ->
-                item(purchase.purchaseId) { PurchaseItem(purchase, state.eventSink) }
+            if (state.purchases.isEmpty()) {
+                EmptyListPlaceholder()
+            } else {
+                PurchasesList(state)
             }
         }
+    }
+}
+
+@Composable
+private fun PurchasesList(state: PurchaseHistoryState) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        state.purchases.forEach { purchase ->
+            item(purchase.purchaseId) { PurchaseItem(purchase, state.eventSink) }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.EmptyListPlaceholder() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.Companion.align(Alignment.Center)
+    ) {
+        Text(
+            text = stringResource(Res.string.purchase_history_no_purchases_available),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "🤓",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
