@@ -28,7 +28,6 @@ import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 sealed interface ShopEvent : CircuitUiEvent {
     data class Buy(val product: Product) : ShopEvent
     data object NavigateToPurchaseHistory : ShopEvent
-    data object NavigateToPomodoro : ShopEvent
     data object NavigateToAddProduct : ShopEvent
     data class ShowProductBottomSheet(val product: Product) : ShopEvent
     data object HideProductBottomSheet : ShopEvent
@@ -83,8 +82,6 @@ class ShopPresenter(
 
                     is NavigateToEditProduct ->
                         navigator.goTo(AddProductScreen(showProductBottomSheet))
-
-                    NavigateToPomodoro -> navigator.goTo(PomodoroScreen)
 
                     is ShowProductBottomSheet -> showProductBottomSheet = event.product
 

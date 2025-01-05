@@ -1,23 +1,19 @@
 package pl.wojtek.focusfuel.features.shop
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,17 +21,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -51,15 +43,11 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.shop.ShopEvent.Buy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
-import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPomodoro
-import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPurchaseHistory
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.ui.AppSnackbarHost
-import pl.wojtek.focusfuel.ui.ShowAnimatedText
 import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
-import pl.wojtek.focusfuel.ui.unboundedClickable
 import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -156,7 +144,6 @@ private fun PomodorosBalanceIcon(
     state: ShopState,
 ) {
     Row(
-        modifier = Modifier.unboundedClickable { state.eventSink(NavigateToPomodoro) },
         verticalAlignment = CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
