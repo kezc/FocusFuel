@@ -31,8 +31,15 @@ sealed interface AddProductEvent : CircuitUiEvent {
 data class AddProductState(
     val name: String = "",
     val price: String = "",
+    val nameError: AddProductError? = null,
+    val priceError: AddProductError? = null,
     val eventSink: (AddProductEvent) -> Unit,
 ) : CircuitUiState
+
+enum class AddProductError {
+    EMPTY_NAME,
+    INVALID_PRICE
+}
 
 @CircuitInject(AddProductScreen::class, AppScope::class)
 @Inject
@@ -46,28 +53,58 @@ class AddProductPresenter(
         val initialProduct = addProductScreen.product
         var name by remember { mutableStateOf(initialProduct?.name ?: "") }
         var price by remember { mutableStateOf(initialProduct?.costInPomodoros?.toString() ?: "") }
+        var nameError by remember { mutableStateOf<AddProductError?>(null) }
+        var priceError by remember { mutableStateOf<AddProductError?>(null) }
 
         return AddProductState(
             name = name,
             price = price,
+            nameError = nameError,
+            priceError = priceError,
             eventSink = asyncEventSink { event ->
                 when (event) {
-                    is Add -> launch {
-                        if (initialProduct != null) {
-                            shopRepository.hideProduct(initialProduct)
+                    is Add -> {
+                        nameError = getNameError(name)
+                        priceError = getPriceError(price)
+
+                        if (nameError == null && priceError == null) {
+                            launch {
+                                if (initialProduct != null) {
+                                    shopRepository.hideProduct(initialProduct)
+                                }
+                                shopRepository.addProduct(
+                                    name = name,
+                                    costInPomodoros = price.toIntOrNull() ?: 0
+                                )
+                                navigator.pop()
+                            }
                         }
-                        shopRepository.addProduct(
-                            name = name,
-                            costInPomodoros = price.toIntOrNull() ?: 0
-                        )
-                        navigator.pop()
                     }
 
-                    is SetName -> name = event.name
-                    is SetPrice -> price = event.price
+                    is SetName -> {
+                        name = event.name
+                        nameError = getNameError(name)
+                    }
+
+                    is SetPrice -> {
+                        price = event.price
+                        priceError = getPriceError(price)
+                    }
+
                     is Close -> navigator.pop()
                 }
             }
         )
+    }
+
+    private fun getNameError(name: String) = if (name.isBlank()) AddProductError.EMPTY_NAME else null
+
+    private fun getPriceError(price: String): AddProductError? {
+        val priceParsed = price.toIntOrNull()
+        return if (
+            price.isBlank()
+            || priceParsed == null
+            || priceParsed <= 0
+        ) AddProductError.INVALID_PRICE else null
     }
 } 

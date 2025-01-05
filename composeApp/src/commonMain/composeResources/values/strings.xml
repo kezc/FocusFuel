@@ -13,5 +13,7 @@
     <string name="bottom_bar_pomodoro">Pomodoro</string>
     <string name="bottom_bar_purchases">Purchases</string>
     <string name="bottom_bar_shop">Shop</string>
+    <string name="add_product_error_empty_name">Name cannot be empty</string>
+    <string name="add_product_error_invalid_price">Invalid price</string>
 
 </resources>

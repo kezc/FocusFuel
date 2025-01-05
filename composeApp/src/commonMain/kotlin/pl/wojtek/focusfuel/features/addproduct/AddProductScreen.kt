@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,8 +18,13 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
+import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.add_product_error_empty_name
+import focusfuel.composeapp.generated.resources.add_product_error_invalid_price
+import org.jetbrains.compose.resources.stringResource
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppCloseIcon
+import pl.wojtek.focusfuel.ui.AppOutlinedTextField
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -53,21 +56,23 @@ fun AddProductUI(
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
-            OutlinedTextField(
+            AppOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.name,
                 onValueChange = { state.eventSink(AddProductEvent.SetName(it)) },
-                label = { Text("Product Name") }
+                label = { Text("Product Name") },
+                error = state.nameError?.toText(),
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
+            Spacer(modifier = Modifier.height(2.dp))
+            AppOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.price,
                 onValueChange = { state.eventSink(AddProductEvent.SetPrice(it)) },
                 label = { Text("Product Price") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                error = state.priceError?.toText(),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { state.eventSink(AddProductEvent.Add) }) {
@@ -75,4 +80,10 @@ fun AddProductUI(
             }
         }
     }
-} 
+}
+
+@Composable
+private fun AddProductError.toText() = when (this) {
+    AddProductError.EMPTY_NAME -> stringResource(Res.string.add_product_error_empty_name)
+    AddProductError.INVALID_PRICE -> stringResource(Res.string.add_product_error_invalid_price)
+}

@@ -21,8 +21,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun ShowAnimatedText(
     text: String?,
+    durationMillis: Int = 300,
     textComposable: @Composable (String) -> Unit = { Text(text = it) },
-    durationMillis: Int = 300
 ) {
     var localText by remember {
         mutableStateOf<String?>(null)
