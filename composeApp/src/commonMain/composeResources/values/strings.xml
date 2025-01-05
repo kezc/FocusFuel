@@ -20,5 +20,8 @@
     <string name="add_product_price_label">Product Price</string>
     <string name="add_product_button_label">Add Product</string>
     <string name="purchase_history_no_purchases_available">Looks like you haven't made any purchases yet!</string>
+    <string name="notification_work_title">Time to work!</string>
+    <string name="notification_short_break_title">Short break time!</string>
+    <string name="notification_long_break_title">Long break time!</string>
 
 </resources>

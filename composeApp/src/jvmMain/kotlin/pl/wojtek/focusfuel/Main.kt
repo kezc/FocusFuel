@@ -19,6 +19,8 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
 import pl.wojtek.focusfuel.mainscreen.MainScreen
+import pl.wojtek.focusfuel.notification.SoundNotificationSender
+import pl.wojtek.focusfuel.notifications.NotificationSender
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -35,8 +37,8 @@ fun main() = application {
     val backstack = rememberSaveableBackStack(MainScreen)
     NotifierManager.initialize(
         NotificationPlatformConfiguration.Desktop(
-            showPushNotification = true,
-            notificationIconPath = composeDesktopResourcesPath() + File.separator + "notification_icon.png"
+            showPushNotification = false,
+            notificationIconPath = composeDesktopResourcesPath() + File.separator + "notification_icon.png",
         )
     )
     appComponent.pomodoroNotificationsManager.value.init()
@@ -61,6 +63,10 @@ fun main() = application {
 @MergeComponent(AppScope::class)
 @SingleIn(AppScope::class)
 abstract class AppComponent : AppComponentMerged {
+    @Provides
+    fun provideNotificationSender(soundNotificationSender: SoundNotificationSender): NotificationSender =
+        soundNotificationSender
+
     @Provides
     fun provideDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
         val dbFilePath = File(System.getProperty("java.io.tmpdir"), "focusfuel/my_mroom.db").absolutePath

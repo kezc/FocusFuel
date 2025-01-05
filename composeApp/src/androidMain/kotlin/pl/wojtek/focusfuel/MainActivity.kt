@@ -14,6 +14,8 @@ import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import pl.wojtek.focusfuel.database.AppDatabase
 import pl.wojtek.focusfuel.mainscreen.MainScreen
+import pl.wojtek.focusfuel.notifications.NotificationSender
+import pl.wojtek.focusfuel.notifications.SimpleNotificationSender
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
@@ -45,6 +47,9 @@ abstract class AppComponent(
     @get:Provides val context: Context
 ) : AppComponentMerged {
     abstract val pomodoroServiceManager: PomodoroServiceManager
+
+    @Provides
+    fun provideNotificationSender(simpleNotificationSender: SimpleNotificationSender) : NotificationSender = simpleNotificationSender
 
     @Provides
     fun provideDatabaseBuilder(ctx: Context): RoomDatabase.Builder<AppDatabase> {

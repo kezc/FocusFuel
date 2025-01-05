@@ -13,12 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -26,6 +30,8 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +52,7 @@ import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -60,6 +67,7 @@ class PomodoroUI : Ui<PomodoroState> {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
     val backgroundColor = animateColorAsState(
@@ -73,6 +81,23 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = backgroundColor.value,
+        topBar = {
+            TopAppBar(
+                title = { },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor.value),
+                actions = {
+                    val soundIcon = if (state.isSoundOn)
+                        Icons.AutoMirrored.Outlined.VolumeUp
+                    else
+                        Icons.AutoMirrored.Outlined.VolumeOff
+                    AppIconButton(
+                        onClick = { state.eventSink(PomodoroEvent.ToggleSound) },
+                        imageVector = soundIcon,
+                        contentDescription = null
+                    )
+                }
+            )
+        },
         content = { paddingValues ->
             Column(
                 modifier = Modifier.padding(paddingValues).fillMaxSize(),
