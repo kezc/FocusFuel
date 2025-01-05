@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -19,8 +20,12 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
 import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.add_product_button_label
 import focusfuel.composeapp.generated.resources.add_product_error_empty_name
 import focusfuel.composeapp.generated.resources.add_product_error_invalid_price
+import focusfuel.composeapp.generated.resources.add_product_name_label
+import focusfuel.composeapp.generated.resources.add_product_price_label
+import focusfuel.composeapp.generated.resources.add_product_title
 import org.jetbrains.compose.resources.stringResource
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppCloseIcon
@@ -49,9 +54,12 @@ fun AddProductUI(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Add Product") }, navigationIcon = {
-                AppCloseIcon(onClick = { state.eventSink(AddProductEvent.Close) })
-            })
+            TopAppBar(
+                title = { Text(stringResource(Res.string.add_product_title)) },
+                navigationIcon = {
+                    AppCloseIcon(onClick = { state.eventSink(AddProductEvent.Close) })
+                }
+            )
         },
         modifier = modifier
     ) { innerPadding ->
@@ -60,7 +68,7 @@ fun AddProductUI(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.name,
                 onValueChange = { state.eventSink(AddProductEvent.SetName(it)) },
-                label = { Text("Product Name") },
+                label = { Text(stringResource(Res.string.add_product_name_label)) },
                 error = state.nameError?.toText(),
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -68,7 +76,7 @@ fun AddProductUI(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.price,
                 onValueChange = { state.eventSink(AddProductEvent.SetPrice(it)) },
-                label = { Text("Product Price") },
+                label = { Text(stringResource(Res.string.add_product_price_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 error = state.priceError?.toText(),
             )
@@ -76,7 +84,7 @@ fun AddProductUI(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { state.eventSink(AddProductEvent.Add) }) {
-                Text("Add Product")
+                Text(stringResource(Res.string.add_product_button_label))
             }
         }
     }

@@ -15,5 +15,9 @@
     <string name="bottom_bar_shop">Shop</string>
     <string name="add_product_error_empty_name">Name cannot be empty</string>
     <string name="add_product_error_invalid_price">Invalid price</string>
+    <string name="add_product_title">Add Product</string>
+    <string name="add_product_name_label">Product Name</string>
+    <string name="add_product_price_label">Product Price</string>
+    <string name="add_product_button_label">Add Product</string>
 
 </resources>
