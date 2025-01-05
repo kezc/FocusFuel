@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.outlined.VolumeOff
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Refresh
@@ -54,6 +53,8 @@ import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
+import pl.wojtek.focusfuel.util.platform.Platform
+import pl.wojtek.focusfuel.util.platform.platform
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 @CommonParcelize
@@ -85,17 +86,7 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
             TopAppBar(
                 title = { },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = backgroundColor.value),
-                actions = {
-                    val soundIcon = if (state.isSoundOn)
-                        Icons.AutoMirrored.Outlined.VolumeUp
-                    else
-                        Icons.AutoMirrored.Outlined.VolumeOff
-                    AppIconButton(
-                        onClick = { state.eventSink(PomodoroEvent.ToggleSound) },
-                        imageVector = soundIcon,
-                        contentDescription = null
-                    )
-                }
+                actions = { MuteIcon(state) }
             )
         },
         content = { paddingValues ->
@@ -112,6 +103,23 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
             }
         }
     )
+}
+
+@Composable
+private fun MuteIcon(
+    state: PomodoroState,
+) {
+    if (platform == Platform.DESKTOP) {
+        val soundIcon = if (state.isSoundOn)
+            Icons.AutoMirrored.Outlined.VolumeUp
+        else
+            Icons.AutoMirrored.Outlined.VolumeOff
+        AppIconButton(
+            onClick = { state.eventSink(PomodoroEvent.ToggleSound) },
+            imageVector = soundIcon,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
