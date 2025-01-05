@@ -3,6 +3,8 @@ package pl.wojtek.focusfuel.features.history
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import arrow.core.getOrElse
+import arrow.core.right
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -12,6 +14,8 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.repository.Purchase
 import pl.wojtek.focusfuel.repository.ShopRepository
+import pl.wojtek.focusfuel.ui.observeError
+import pl.wojtek.focusfuel.ui.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
@@ -24,6 +28,7 @@ sealed interface PurchaseHistoryEvent : CircuitUiEvent {
 data class PurchaseHistoryState(
     val purchases: List<PurchaseItem> = emptyList(),
     val eventSink: (PurchaseHistoryEvent) -> Unit,
+    val error: Throwable?,
 ) : CircuitUiState
 
 @CircuitInject(PurchaseHistoryScreen::class, AppScope::class)
@@ -36,13 +41,20 @@ class PurchaseHistoryPresenter(
 
     @Composable
     override fun presentState(): PurchaseHistoryState {
-        val purchases by shopRepository.getPurchases().collectAsStateWithLifecycle(emptyList())
+        val error = rememberDisappearingState<Throwable>()
+        val purchases by shopRepository.getPurchases()
+            .observeError(error)
+            .collectAsStateWithLifecycle(emptyList<Purchase>().right())
+
         return PurchaseHistoryState(
-            purchases = purchases.toListItem(),
+            error = error.value,
+            purchases = purchases.getOrElse { emptyList() }.toListItem(),
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is PurchaseHistoryEvent.UpdateUsedStatus -> launch {
-                        shopRepository.updatePurchaseUsedStatus(event.purchaseId, event.used)
+                        shopRepository
+                            .updatePurchaseUsedStatus(event.purchaseId, event.used)
+                            .observeError(error)
                     }
                 }
             }

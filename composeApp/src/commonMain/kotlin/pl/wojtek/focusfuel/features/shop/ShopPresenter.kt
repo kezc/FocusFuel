@@ -1,28 +1,36 @@
 package pl.wojtek.focusfuel.features.shop
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import arrow.core.getOrElse
+import arrow.core.right
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.features.addproduct.AddProductScreen
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryScreen
-import pl.wojtek.focusfuel.features.pomodoro.PomodoroScreen
-import pl.wojtek.focusfuel.features.shop.ShopEvent.*
+import pl.wojtek.focusfuel.features.shop.ShopEvent.Buy
+import pl.wojtek.focusfuel.features.shop.ShopEvent.DeleteProduct
+import pl.wojtek.focusfuel.features.shop.ShopEvent.HideProductBottomSheet
+import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
+import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToEditProduct
+import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToPurchaseHistory
+import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
+import pl.wojtek.focusfuel.ui.observeError
+import pl.wojtek.focusfuel.ui.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
+import pl.wojtek.focusfuel.util.either.EitherT
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface ShopEvent : CircuitUiEvent {
@@ -38,7 +46,7 @@ sealed interface ShopEvent : CircuitUiEvent {
 data class ShopState(
     val products: List<Product>,
     val orderResult: ShopPresenter.OrderResult?,
-    val availablePomodoros: Int,
+    val availablePomodoros: Int?,
     val eventSink: (ShopEvent) -> Unit,
     val showProductBottomSheet: Product?,
 ) : CircuitUiState
@@ -51,27 +59,23 @@ class ShopPresenter(
 ) : FocusPresenter<ShopState>() {
     @Composable
     override fun presentState(): ShopState {
-        val products by shopRepository.getProducts().collectAsStateWithLifecycle(emptyList())
-        val balance by shopRepository.pomodoroBalance().collectAsStateWithLifecycle(0)
-        var orderResult: OrderResult? by remember { mutableStateOf(null) }
-        LaunchedEffect(orderResult) {
-            if (orderResult != null) {
-                delay(3000)
-                orderResult = null
-            }
-        }
+        val error = rememberDisappearingState<Throwable>()
+        val products by shopRepository.getProducts().observeError(error).collectAsStateWithLifecycle(emptyList<Product>().right())
+        val balance by shopRepository.pomodoroBalance().observeError(error).collectAsStateWithLifecycle(null as EitherT<Int>?)
+        var orderResult: OrderResult? by rememberDisappearingState<OrderResult?>()
         var showProductBottomSheet by remember { mutableStateOf<Product?>(null) }
 
         return ShopState(
-            products = products,
+            products = products.getOrElse { emptyList() },
             orderResult = orderResult,
-            availablePomodoros = balance,
+            availablePomodoros = balance?.getOrNull(),
             showProductBottomSheet = showProductBottomSheet,
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is Buy -> launch {
-                        val success = shopRepository.makePurchase(event.product)
-                        orderResult = getOrderResult(success)
+                        shopRepository.makePurchase(event.product)
+                            .observeError(error)
+                            .onRight { orderResult = getOrderResult(it) }
                     }
 
                     NavigateToPurchaseHistory ->

@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import arrow.core.raise.either
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
@@ -17,6 +18,7 @@ import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.Close
 import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetName
 import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetPrice
 import pl.wojtek.focusfuel.repository.ShopRepository
+import pl.wojtek.focusfuel.ui.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -34,6 +36,7 @@ data class AddProductState(
     val nameError: AddProductError? = null,
     val priceError: AddProductError? = null,
     val eventSink: (AddProductEvent) -> Unit,
+    val error: Throwable?,
 ) : CircuitUiState
 
 enum class AddProductError {
@@ -51,16 +54,19 @@ class AddProductPresenter(
     @Composable
     override fun presentState(): AddProductState {
         val initialProduct = addProductScreen.product
+
         var name by remember { mutableStateOf(initialProduct?.name ?: "") }
         var price by remember { mutableStateOf(initialProduct?.costInPomodoros?.toString() ?: "") }
         var nameError by remember { mutableStateOf<AddProductError?>(null) }
         var priceError by remember { mutableStateOf<AddProductError?>(null) }
+        var error by rememberDisappearingState<Throwable>()
 
         return AddProductState(
             name = name,
             price = price,
             nameError = nameError,
             priceError = priceError,
+            error = error,
             eventSink = asyncEventSink { event ->
                 when (event) {
                     is Add -> {
@@ -69,14 +75,16 @@ class AddProductPresenter(
 
                         if (nameError == null && priceError == null) {
                             launch {
-                                if (initialProduct != null) {
-                                    shopRepository.hideProduct(initialProduct)
-                                }
-                                shopRepository.addProduct(
-                                    name = name,
-                                    costInPomodoros = price.toIntOrNull() ?: 0
-                                )
-                                navigator.pop()
+                                either {
+                                    if (initialProduct != null) {
+                                        shopRepository.hideProduct(initialProduct).bind()
+                                    }
+                                    shopRepository.addProduct(
+                                        name = name,
+                                        costInPomodoros = price.toIntOrNull() ?: 0
+                                    ).bind()
+                                }.onRight { navigator.pop() }
+                                    .onLeft { error = it }
                             }
                         }
                     }
@@ -107,4 +115,4 @@ class AddProductPresenter(
             || priceParsed <= 0
         ) AddProductError.INVALID_PRICE else null
     }
-} 
+}

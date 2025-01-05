@@ -29,6 +29,9 @@ import org.jetbrains.compose.resources.stringResource
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppCloseIcon
 import pl.wojtek.focusfuel.ui.AppOutlinedTextField
+import pl.wojtek.focusfuel.ui.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -51,6 +54,8 @@ fun AddProductUI(
     modifier: Modifier = Modifier,
     state: AddProductState,
 ) {
+    val snackbarHostState = rememberSnackbarHostState()
+    ShowSnackbarHandler(snackbarHostState, state.error?.message)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,6 +65,7 @@ fun AddProductUI(
                 }
             )
         },
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {

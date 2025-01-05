@@ -44,6 +44,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
+import pl.wojtek.focusfuel.ui.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -65,10 +68,14 @@ fun PurchaseHistoryUI(
     modifier: Modifier = Modifier,
     state: PurchaseHistoryState,
 ) {
+    val snackbarHostState = rememberSnackbarHostState()
+    ShowSnackbarHandler(snackbarHostState, state.error?.message)
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(Res.string.purchase_history_title)) })
         },
+        snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier
     ) { innerPadding ->
         Box(
@@ -218,6 +225,9 @@ fun PurchaseHistoryScreenPreview() {
                 formattedDate = "2021-01-01",
                 used = true
             ),
-        )
-    ) {})
+        ),
+        {},
+        null
+    )
+    )
 } 

@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +46,7 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.AppIconButton
 import pl.wojtek.focusfuel.ui.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
 import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
 import pl.wojtek.focusfuel.ui.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
@@ -72,13 +72,7 @@ fun ShopUI(
     state: ShopState,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
-
-    val orderResult = state.orderResult?.toText()
-    LaunchedEffect(orderResult) {
-        if (orderResult != null) {
-            snackbarHostState.showSnackbar(orderResult)
-        }
-    }
+    ShowSnackbarHandler(snackbarHostState, state.orderResult?.toText())
     Scaffold(
         topBar = {
             TopAppBar(
