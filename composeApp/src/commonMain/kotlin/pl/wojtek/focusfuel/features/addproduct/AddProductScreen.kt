@@ -27,11 +27,11 @@ import focusfuel.composeapp.generated.resources.add_product_price_label
 import focusfuel.composeapp.generated.resources.add_product_title
 import org.jetbrains.compose.resources.stringResource
 import pl.wojtek.focusfuel.repository.Product
-import pl.wojtek.focusfuel.ui.AppCloseIcon
-import pl.wojtek.focusfuel.ui.AppOutlinedTextField
-import pl.wojtek.focusfuel.ui.AppSnackbarHost
-import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
-import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.component.AppCloseIcon
+import pl.wojtek.focusfuel.ui.component.AppOutlinedTextField
+import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.util.ShowSnackbarHandler
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 

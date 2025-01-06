@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.ui
+package pl.wojtek.focusfuel.ui.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding

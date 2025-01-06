@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.ui
+package pl.wojtek.focusfuel.ui.util
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp

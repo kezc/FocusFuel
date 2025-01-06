@@ -36,11 +36,11 @@ import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
-import pl.wojtek.focusfuel.ui.AppSnackbarHost
-import pl.wojtek.focusfuel.ui.ProductName
-import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
-import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
-import pl.wojtek.focusfuel.ui.withoutBottom
+import pl.wojtek.focusfuel.ui.common.ProductName
+import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.util.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.util.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 

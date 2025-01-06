@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.ui
+package pl.wojtek.focusfuel.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

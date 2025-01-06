@@ -28,8 +28,8 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
-import pl.wojtek.focusfuel.ui.observeError
-import pl.wojtek.focusfuel.ui.rememberDisappearingState
+import pl.wojtek.focusfuel.ui.util.observeError
+import pl.wojtek.focusfuel.ui.util.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.either.EitherT

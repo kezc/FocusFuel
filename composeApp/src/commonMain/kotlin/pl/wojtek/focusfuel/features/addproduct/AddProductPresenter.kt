@@ -18,7 +18,7 @@ import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.Close
 import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetName
 import pl.wojtek.focusfuel.features.addproduct.AddProductEvent.SetPrice
 import pl.wojtek.focusfuel.repository.ShopRepository
-import pl.wojtek.focusfuel.ui.rememberDisappearingState
+import pl.wojtek.focusfuel.ui.util.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope

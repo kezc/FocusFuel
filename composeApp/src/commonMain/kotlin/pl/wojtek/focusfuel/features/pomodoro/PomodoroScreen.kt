@@ -51,7 +51,7 @@ import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import pl.wojtek.focusfuel.ui.AppIconButton
+import pl.wojtek.focusfuel.ui.component.AppIconButton
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import pl.wojtek.focusfuel.util.platform.Platform
 import pl.wojtek.focusfuel.util.platform.platform

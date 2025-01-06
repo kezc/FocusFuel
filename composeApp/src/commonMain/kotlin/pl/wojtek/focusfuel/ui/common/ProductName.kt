@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.ui
+package pl.wojtek.focusfuel.ui.common
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import focusfuel.composeapp.generated.resources.Res
 import focusfuel.composeapp.generated.resources.ic_tomato
 import org.jetbrains.compose.resources.painterResource
+import pl.wojtek.focusfuel.ui.util.MeasureViewSize
 
 @Composable
 fun ProductName(

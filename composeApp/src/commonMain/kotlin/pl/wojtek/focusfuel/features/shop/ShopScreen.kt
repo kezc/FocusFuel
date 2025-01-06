@@ -42,12 +42,12 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
-import pl.wojtek.focusfuel.ui.AppIconButton
-import pl.wojtek.focusfuel.ui.AppSnackbarHost
-import pl.wojtek.focusfuel.ui.ProductName
-import pl.wojtek.focusfuel.ui.ShowSnackbarHandler
-import pl.wojtek.focusfuel.ui.rememberSnackbarHostState
-import pl.wojtek.focusfuel.ui.withoutBottom
+import pl.wojtek.focusfuel.ui.common.ProductName
+import pl.wojtek.focusfuel.ui.component.AppIconButton
+import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
+import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.util.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.util.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 

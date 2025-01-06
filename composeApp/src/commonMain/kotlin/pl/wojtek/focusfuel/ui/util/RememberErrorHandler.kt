@@ -1,4 +1,4 @@
-package pl.wojtek.focusfuel.ui
+package pl.wojtek.focusfuel.ui.util
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable

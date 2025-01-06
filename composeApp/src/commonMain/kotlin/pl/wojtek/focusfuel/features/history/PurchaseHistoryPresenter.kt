@@ -14,8 +14,8 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import pl.wojtek.focusfuel.repository.Purchase
 import pl.wojtek.focusfuel.repository.ShopRepository
-import pl.wojtek.focusfuel.ui.observeError
-import pl.wojtek.focusfuel.ui.rememberDisappearingState
+import pl.wojtek.focusfuel.ui.util.observeError
+import pl.wojtek.focusfuel.ui.util.rememberDisappearingState
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
