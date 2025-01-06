@@ -13,6 +13,7 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import pl.wojtek.focusfuel.di.AppComponent
+import pl.wojtek.focusfuel.di.create
 import pl.wojtek.focusfuel.mainscreen.MainScreen
 import java.io.File
 

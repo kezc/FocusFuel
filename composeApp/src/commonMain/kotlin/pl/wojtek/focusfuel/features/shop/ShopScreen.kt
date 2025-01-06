@@ -42,6 +42,7 @@ import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
 import pl.wojtek.focusfuel.repository.Product
+import pl.wojtek.focusfuel.ui.common.AppLoadingScreen
 import pl.wojtek.focusfuel.ui.common.ProductName
 import pl.wojtek.focusfuel.ui.component.AppIconButton
 import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
@@ -87,6 +88,10 @@ fun ShopUI(
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
+        if (state.isLoading) {
+            AppLoadingScreen(Modifier.padding(innerPadding))
+            return@Scaffold
+        }
         LazyColumn(
             modifier = Modifier.fillMaxSize()
                 .padding(innerPadding.withoutBottom()),

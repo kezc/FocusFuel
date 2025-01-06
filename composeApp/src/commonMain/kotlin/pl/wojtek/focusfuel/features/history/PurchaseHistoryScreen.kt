@@ -36,6 +36,7 @@ import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
+import pl.wojtek.focusfuel.ui.common.AppLoadingScreen
 import pl.wojtek.focusfuel.ui.common.ProductName
 import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
 import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
@@ -71,6 +72,11 @@ fun PurchaseHistoryUI(
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier
     ) { innerPadding ->
+        if (state.isLoading) {
+            AppLoadingScreen(Modifier.padding(innerPadding))
+            return@Scaffold
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -196,7 +202,8 @@ fun PurchaseHistoryScreenPreview() {
                 ),
             ),
             {},
-            null
+            null,
+            false,
         )
     )
 } 

@@ -5,10 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import arrow.core.getOrElse
 import arrow.core.right
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -30,9 +31,10 @@ import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.ui.util.observeError
 import pl.wojtek.focusfuel.ui.util.rememberDisappearingState
+import pl.wojtek.focusfuel.ui.util.rememberRetainedProgressCounter
+import pl.wojtek.focusfuel.ui.util.watchProgress
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
-import pl.wojtek.focusfuel.util.either.EitherT
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface ShopEvent : CircuitUiEvent {
@@ -50,10 +52,11 @@ sealed interface ShopEvent : CircuitUiEvent {
 data class ShopState(
     val products: List<Product>,
     val orderResult: ShopPresenter.OrderResult?,
-    val availablePomodoros: Int?,
+    val availablePomodoros: Int,
     val eventSink: (ShopEvent) -> Unit,
     val selectedProductToChange: Product?,
     val selectedProductToBuy: Product?,
+    val isLoading: Boolean,
 ) : CircuitUiState
 
 @CircuitInject(ShopScreen::class, AppScope::class)
@@ -65,16 +68,25 @@ class ShopPresenter(
     @Composable
     override fun presentState(): ShopState {
         val error = rememberDisappearingState<Throwable>()
-        val products by shopRepository.getProducts().observeError(error).collectAsStateWithLifecycle(emptyList<Product>().right())
-        val balance by shopRepository.pomodoroBalance().observeError(error).collectAsStateWithLifecycle(null as EitherT<Int>?)
+        val progress = rememberRetainedProgressCounter(true)
+        val products by rememberRetained {
+            shopRepository.getProducts()
+                .observeError(error)
+                .watchProgress(progress)
+        }.collectAsRetainedState(emptyList<Product>().right())
+        val balance by rememberRetained {
+            shopRepository.pomodoroBalance()
+                .observeError(error)
+        }.collectAsRetainedState(0.right())
         var orderResult: OrderResult? by rememberDisappearingState<OrderResult?>()
         var selectedProductToChange by remember { mutableStateOf<Product?>(null) }
         var selectedProductToBuy by remember { mutableStateOf<Product?>(null) }
 
         return ShopState(
+            isLoading = progress.state.value,
             products = products.getOrElse { emptyList() },
             orderResult = orderResult,
-            availablePomodoros = balance?.getOrNull(),
+            availablePomodoros = balance.getOrElse { 0 },
             selectedProductToChange = selectedProductToChange,
             selectedProductToBuy = selectedProductToBuy,
             eventSink = asyncEventSink { event ->

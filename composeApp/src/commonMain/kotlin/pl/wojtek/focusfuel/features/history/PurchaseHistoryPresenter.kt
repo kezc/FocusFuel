@@ -2,10 +2,11 @@ package pl.wojtek.focusfuel.features.history
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import arrow.core.getOrElse
 import arrow.core.right
 import com.slack.circuit.codegen.annotations.CircuitInject
+import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -16,6 +17,8 @@ import pl.wojtek.focusfuel.repository.Purchase
 import pl.wojtek.focusfuel.repository.ShopRepository
 import pl.wojtek.focusfuel.ui.util.observeError
 import pl.wojtek.focusfuel.ui.util.rememberDisappearingState
+import pl.wojtek.focusfuel.ui.util.rememberRetainedProgressCounter
+import pl.wojtek.focusfuel.ui.util.watchProgress
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
 import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
@@ -29,6 +32,7 @@ data class PurchaseHistoryState(
     val purchases: List<PurchaseItem> = emptyList(),
     val eventSink: (PurchaseHistoryEvent) -> Unit,
     val error: Throwable?,
+    val isLoading: Boolean,
 ) : CircuitUiState
 
 @CircuitInject(PurchaseHistoryScreen::class, AppScope::class)
@@ -42,12 +46,17 @@ class PurchaseHistoryPresenter(
     @Composable
     override fun presentState(): PurchaseHistoryState {
         val error = rememberDisappearingState<Throwable>()
-        val purchases by shopRepository.getPurchases()
-            .observeError(error)
-            .collectAsStateWithLifecycle(emptyList<Purchase>().right())
+        val progressCounter = rememberRetainedProgressCounter(true)
+
+        val purchases by rememberRetained {
+            shopRepository.getPurchases()
+                .watchProgress(progressCounter)
+                .observeError(error)
+        }.collectAsRetainedState(emptyList<Purchase>().right())
 
         return PurchaseHistoryState(
             error = error.value,
+            isLoading = progressCounter.state.value,
             purchases = purchases.getOrElse { emptyList() }.toListItem(),
             eventSink = asyncEventSink { event ->
                 when (event) {
