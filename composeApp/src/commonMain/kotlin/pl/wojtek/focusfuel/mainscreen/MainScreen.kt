@@ -4,21 +4,18 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Note
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Note
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.screen.Screen
@@ -94,6 +91,12 @@ private fun BottomNavigationBar(selectedTab: BottomNavTab, onSelectedTab: (Botto
                 alwaysShowLabel = true,
                 selected = selectedTab == item,
                 onClick = { onSelectedTab(item) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedTextColor = Color.Black,
+                    selectedIconColor = Color.Black,
+                    unselectedIconColor = Color.Black,
+                    unselectedTextColor = Color.Black,
+                ),
             )
         }
     }
