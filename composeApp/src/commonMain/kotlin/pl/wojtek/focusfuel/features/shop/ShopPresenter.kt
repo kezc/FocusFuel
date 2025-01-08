@@ -13,6 +13,8 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -35,6 +37,7 @@ import pl.wojtek.focusfuel.ui.util.rememberRetainedProgressCounter
 import pl.wojtek.focusfuel.ui.util.watchProgress
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
+import pl.wojtek.focusfuel.util.circuit.rememberRetainedCoroutineScope
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
 sealed interface ShopEvent : CircuitUiEvent {
@@ -69,15 +72,18 @@ class ShopPresenter(
     override fun presentState(): ShopState {
         val error = rememberDisappearingState<Throwable>()
         val progress = rememberRetainedProgressCounter(true)
+        val retainedScope = rememberRetainedCoroutineScope()
         val products by rememberRetained {
             shopRepository.getProducts()
                 .observeError(error)
                 .watchProgress(progress)
-        }.collectAsRetainedState(emptyList<Product>().right())
+                .stateIn(retainedScope, SharingStarted.Lazily, emptyList<Product>().right())
+        }.collectAsRetainedState()
         val balance by rememberRetained {
             shopRepository.pomodoroBalance()
                 .observeError(error)
-        }.collectAsRetainedState(0.right())
+                .stateIn(retainedScope, SharingStarted.Lazily, 0.right())
+        }.collectAsRetainedState()
         var orderResult: OrderResult? by rememberDisappearingState<OrderResult?>()
         var selectedProductToChange by remember { mutableStateOf<Product?>(null) }
         var selectedProductToBuy by remember { mutableStateOf<Product?>(null) }

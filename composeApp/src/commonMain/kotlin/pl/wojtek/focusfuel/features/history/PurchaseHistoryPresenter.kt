@@ -10,6 +10,8 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
@@ -21,6 +23,7 @@ import pl.wojtek.focusfuel.ui.util.rememberRetainedProgressCounter
 import pl.wojtek.focusfuel.ui.util.watchProgress
 import pl.wojtek.focusfuel.util.circuit.FocusPresenter
 import pl.wojtek.focusfuel.util.circuit.asyncEventSink
+import pl.wojtek.focusfuel.util.circuit.rememberRetainedCoroutineScope
 import pl.wojtek.focusfuel.util.datetime.DateTimeFormatter
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
 
@@ -47,12 +50,14 @@ class PurchaseHistoryPresenter(
     override fun presentState(): PurchaseHistoryState {
         val error = rememberDisappearingState<Throwable>()
         val progressCounter = rememberRetainedProgressCounter(true)
+        val retainedScope = rememberRetainedCoroutineScope()
 
         val purchases by rememberRetained {
             shopRepository.getPurchases()
                 .watchProgress(progressCounter)
                 .observeError(error)
-        }.collectAsRetainedState(emptyList<Purchase>().right())
+                .stateIn(retainedScope, SharingStarted.Lazily, emptyList<Purchase>().right())
+        }.collectAsRetainedState()
 
         return PurchaseHistoryState(
             error = error.value,
