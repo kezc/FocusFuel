@@ -111,7 +111,7 @@ class PomodoroService : Service() {
         return NotificationCompat.Builder(this, notificationChannelId)
             .setContentTitle(phaseText)
             .setContentText(getString(R.string.time_remaining, PomodoroTimeFormat.formatPomodoroTime(state.timeRemainingMs)))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_tomato)
             .addAction(buttonIcon, buttonText, buttonAction)
             .build()
     }

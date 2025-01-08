@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         val circuit = (applicationContext as FocusFuelApp).appComponent.circuit
 
         enableEdgeToEdge()

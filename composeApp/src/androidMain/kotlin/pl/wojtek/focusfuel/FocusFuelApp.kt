@@ -12,13 +12,14 @@ class FocusFuelApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         appComponent = AppComponent::class.create(this)
         appComponent.pomodoroServiceManager.init()
         ProcessLifecycleOwner.get().lifecycle.addObserver(appComponent.appInForegroundNotifier)
 
         NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
-                notificationIconResId = R.drawable.ic_launcher_foreground,
+                notificationIconResId = R.drawable.ic_tomato,
                 showPushNotification = false,
                 notificationChannelData = NotificationPlatformConfiguration.Android.NotificationChannelData(
                     id = "PomodoroChannel",
