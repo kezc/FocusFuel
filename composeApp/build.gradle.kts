@@ -79,6 +79,8 @@ kotlin {
             implementation(libs.kermit)
 
             implementation(libs.kmpnotifier)
+
+            implementation(libs.haze.materials)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

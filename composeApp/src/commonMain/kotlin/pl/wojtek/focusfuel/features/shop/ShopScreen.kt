@@ -41,13 +41,17 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.shop.ShopEvent.NavigateToAddProduct
 import pl.wojtek.focusfuel.features.shop.ShopEvent.SelectProductToBuy
 import pl.wojtek.focusfuel.features.shop.ShopEvent.ShowProductBottomSheet
+import pl.wojtek.focusfuel.mainscreen.MainScaffoldContentPadding
 import pl.wojtek.focusfuel.repository.Product
 import pl.wojtek.focusfuel.ui.common.AppLoadingScreen
 import pl.wojtek.focusfuel.ui.common.ProductName
 import pl.wojtek.focusfuel.ui.component.AppIconButton
 import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
 import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.util.PaddingValuesInsets
 import pl.wojtek.focusfuel.ui.util.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.util.onlyBottom
+import pl.wojtek.focusfuel.ui.util.plus
 import pl.wojtek.focusfuel.ui.util.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -85,6 +89,7 @@ fun ShopUI(
                 }
             )
         },
+        contentWindowInsets = PaddingValuesInsets(MainScaffoldContentPadding.current),
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
         modifier = modifier.fillMaxSize()
     ) { innerPadding ->
@@ -96,7 +101,7 @@ fun ShopUI(
             modifier = Modifier.fillMaxSize()
                 .padding(innerPadding.withoutBottom()),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp) + innerPadding.onlyBottom()
         ) {
             state.products.forEach { product ->
                 item(key = product.id, contentType = Product::class) { ProductCard(product, state.eventSink) }

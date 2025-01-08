@@ -36,11 +36,15 @@ import focusfuel.composeapp.generated.resources.purchase_history_used
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pl.wojtek.focusfuel.features.history.PurchaseHistoryEvent.UpdateUsedStatus
+import pl.wojtek.focusfuel.mainscreen.MainScaffoldContentPadding
 import pl.wojtek.focusfuel.ui.common.AppLoadingScreen
 import pl.wojtek.focusfuel.ui.common.ProductName
 import pl.wojtek.focusfuel.ui.component.AppSnackbarHost
 import pl.wojtek.focusfuel.ui.component.rememberSnackbarHostState
+import pl.wojtek.focusfuel.ui.util.PaddingValuesInsets
 import pl.wojtek.focusfuel.ui.util.ShowSnackbarHandler
+import pl.wojtek.focusfuel.ui.util.onlyBottom
+import pl.wojtek.focusfuel.ui.util.plus
 import pl.wojtek.focusfuel.ui.util.withoutBottom
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
@@ -66,11 +70,10 @@ fun PurchaseHistoryUI(
     ShowSnackbarHandler(snackbarHostState, state.error?.message)
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(stringResource(Res.string.purchase_history_title)) })
-        },
+        topBar = { TopAppBar(title = { Text(stringResource(Res.string.purchase_history_title)) }) },
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
-        modifier = modifier
+        modifier = modifier,
+        contentWindowInsets = PaddingValuesInsets(MainScaffoldContentPadding.current),
     ) { innerPadding ->
         if (state.isLoading) {
             AppLoadingScreen(Modifier.padding(innerPadding))
@@ -85,17 +88,17 @@ fun PurchaseHistoryUI(
             if (state.purchases.isEmpty()) {
                 EmptyListPlaceholder()
             } else {
-                PurchasesList(state)
+                PurchasesList(state, innerPadding.onlyBottom())
             }
         }
     }
 }
 
 @Composable
-private fun PurchasesList(state: PurchaseHistoryState) {
+private fun PurchasesList(state: PurchaseHistoryState, padding: PaddingValues) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp) + padding
     ) {
         state.purchases.forEach { purchase ->
             item(purchase.purchaseId) { PurchaseItem(purchase, state.eventSink) }
@@ -139,7 +142,7 @@ private fun PurchaseItem(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                ProductName(price = purchase.price, productName = purchase.productName,)
+                ProductName(price = purchase.price, productName = purchase.productName)
                 DateText(purchase)
             }
             UsedCheckbox(purchase, eventSink)

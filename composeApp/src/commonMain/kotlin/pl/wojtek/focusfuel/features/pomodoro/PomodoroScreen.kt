@@ -51,7 +51,10 @@ import focusfuel.composeapp.generated.resources.pomodoro_skip_button_description
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pl.wojtek.focusfuel.mainscreen.MainScaffoldContentPadding
 import pl.wojtek.focusfuel.ui.component.AppIconButton
+import pl.wojtek.focusfuel.ui.util.onlyBottom
+import pl.wojtek.focusfuel.ui.util.plus
 import pl.wojtek.focusfuel.util.parcelize.CommonParcelize
 import pl.wojtek.focusfuel.util.platform.Platform
 import pl.wojtek.focusfuel.util.platform.platform
@@ -91,7 +94,7 @@ private fun PomodoroUI(modifier: Modifier = Modifier, state: PomodoroState) {
         },
         content = { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues).fillMaxSize(),
+                modifier = Modifier.padding(paddingValues + MainScaffoldContentPadding.current.onlyBottom()).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
