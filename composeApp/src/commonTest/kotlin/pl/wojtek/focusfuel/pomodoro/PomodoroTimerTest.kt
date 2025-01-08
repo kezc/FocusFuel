@@ -4,17 +4,15 @@ import app.cash.turbine.TurbineTestContext
 import app.cash.turbine.test
 import co.touchlab.kermit.CommonWriter
 import co.touchlab.kermit.Logger
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.LocalDateTime
 import pl.wojtek.focusfuel.features.pomodoro.PomodoroPhase
-import pl.wojtek.focusfuel.features.pomodoro.PomodoroSaver
 import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer
-import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimerState
 import pl.wojtek.focusfuel.repository.PomodorosRepository
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import kotlin.test.Test
@@ -26,28 +24,19 @@ import kotlin.time.Duration
 @OptIn(ExperimentalCoroutinesApi::class)
 class PomodoroTimerTest {
 
-    private lateinit var pomodoroSaver: FakePomodoroSaver
     private val testDispatcher = UnconfinedTestDispatcher()
     private val timestampProvider = object : TimestampProvider {
         override fun getTimestamp(): Long = testDispatcher.scheduler.currentTime
     }
-    private val fakePomodoroDao = object : PomodorosRepository {
-        override fun addPomodoro(date: LocalDateTime) {}
-
-        override suspend fun getTotalPomodorosFinished(): Int {
-            return 0
-        }
-    }
+    private val pomodorosRepository: PomodorosRepository = mockk(relaxUnitFun = true)
 
     private fun createSut(): PomodoroTimer {
         Logger.setLogWriters(CommonWriter())
-        pomodoroSaver = FakePomodoroSaver()
         return PomodoroTimer(
-            pomodoroSaver = pomodoroSaver,
             timestampProvider = timestampProvider,
             coroutineScope = TestScope(testDispatcher),
-            pomodorosRepository = fakePomodoroDao
-        ).also { it.init() }
+            pomodorosRepository = pomodorosRepository
+        )
     }
 
     @Test
@@ -158,25 +147,6 @@ class PomodoroTimerTest {
         }
     }
 
-    @Test
-    fun `GIVEN state is running WHEN save is called THEN it persists the state`() = runTest {
-        val pomodoroTimer = createSut()
-        pomodoroTimer.toggleTimer()
-        pomodoroTimer.save()
-
-        val savedState = pomodoroSaver.loadState()
-        assertTrue(savedState.isRunning)
-    }
-}
-
-class FakePomodoroSaver : PomodoroSaver {
-    private var state: PomodoroTimerState = PomodoroTimerState()
-
-    override fun saveState(state: PomodoroTimerState) {
-        this.state = state
-    }
-
-    override fun loadState(): PomodoroTimerState = state
 }
 
 suspend fun <T> Flow<T>.logTest(

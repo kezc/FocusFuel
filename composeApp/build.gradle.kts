@@ -86,6 +86,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.circuit.test)
             implementation(libs.coroutines.test)
+            implementation(libs.mockk)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
