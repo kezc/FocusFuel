@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,14 +21,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,11 +45,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import co.touchlab.kermit.Logger
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.screen.Screen
@@ -147,13 +143,18 @@ private fun BottomNavigationBar(
                 shape = CircleShape
             )
     ) {
-        BottomBarTabs(
-            selectedTab = selectedTab,
-            onTabSelected = onSelectedTab,
-            onTabPressed = { tabPressed = it; Logger.d("DUPA") { it.toString() } }
-        )
         val animatedSelectedTabIndex by animateFloatAsState(targetValue = NAV_ITEMS.indexOf(tabPressed).toFloat())
         BottomBarTabIndicator(animatedSelectedTabIndex)
+        Row(modifier = Modifier.fillMaxSize()) {
+            NAV_ITEMS.forEach {
+                BottomBarTab(
+                    tab = it,
+                    selectedTab = selectedTab,
+                    onTabPressed = { tabPressed = it },
+                    onTabSelected = onSelectedTab
+                )
+            }
+        }
     }
 }
 
@@ -178,71 +179,60 @@ private fun BottomBarTabIndicator(animatedSelectedTabIndex: Float) {
     )
 }
 
-
 @Composable
-fun BottomBarTabs(
+private fun RowScope.BottomBarTab(
+    tab: BottomNavTab,
     selectedTab: BottomNavTab,
-    onTabSelected: (BottomNavTab) -> Unit,
     onTabPressed: (BottomNavTab) -> Unit,
+    onTabSelected: (BottomNavTab) -> Unit
 ) {
     val selectedTabState by rememberUpdatedState(selectedTab)
-    SideEffect {
-        Logger.d("DUPA") { "BottomBarTabs selectedTab: $selectedTab" }
-    }
-    CompositionLocalProvider(
-        LocalTextStyle provides LocalTextStyle.current.copy(
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-        ),
+    val text = getTabLabel(tab)
+    val alpha by animateFloatAsState(
+        targetValue = if (selectedTab == tab) 1f else .50f,
+        label = "alpha"
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (selectedTab == tab) 1f else .98f,
+        label = "scale"
+    )
+    Column(
+        modifier = Modifier
+            .scale(scale)
+            .alpha(alpha)
+            .fillMaxHeight()
+            .weight(1f)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        onTabPressed(tab)
+                        if (!tryAwaitRelease()) {
+                            onTabPressed(selectedTabState)
+                        }
+                    },
+                    onTap = { onTabSelected(tab) }
+                )
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            for (tab in NAV_ITEMS) {
-                val text = stringResource(
-                    when (tab) {
-                        BottomNavTab.Pomodoro -> Res.string.bottom_bar_pomodoro
-                        BottomNavTab.Shop -> Res.string.bottom_bar_shop
-                        BottomNavTab.Purchases -> Res.string.bottom_bar_purchases
-                    }
-                )
-                val icon = when (tab) {
-                    BottomNavTab.Pomodoro -> vectorResource(Res.drawable.ic_tomato)
-                    BottomNavTab.Shop -> Icons.Outlined.Payment
-                    BottomNavTab.Purchases -> Icons.Outlined.History
-                }
-                val alpha by animateFloatAsState(
-                    targetValue = if (selectedTab == tab) 1f else .40f,
-                    label = "alpha"
-                )
-                val scale by animateFloatAsState(
-                    targetValue = if (selectedTab == tab) 1f else .98f,
-                    label = "scale"
-                )
-                Column(
-                    modifier = Modifier
-                        .scale(scale)
-                        .alpha(alpha)
-                        .fillMaxHeight()
-                        .weight(1f)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    onTabPressed(tab)
-                                    if (!tryAwaitRelease()) {
-                                        onTabPressed(selectedTabState)
-                                    }
-                                },
-                                onTap = { onTabSelected(tab) }
-                            )
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(imageVector = icon, contentDescription = text)
-                    Text(text = text)
-                }
-            }
-        }
+        Icon(imageVector = getTabIcon(tab), contentDescription = text)
+        Text(text = text, style = MaterialTheme.typography.labelMedium)
     }
 }
+
+@Composable
+private fun getTabIcon(tab: BottomNavTab) = when (tab) {
+    BottomNavTab.Pomodoro -> vectorResource(Res.drawable.ic_tomato)
+    BottomNavTab.Shop -> Icons.Outlined.Payment
+    BottomNavTab.Purchases -> Icons.Outlined.History
+}
+
+@Composable
+private fun getTabLabel(tab: BottomNavTab) = stringResource(
+    when (tab) {
+        BottomNavTab.Pomodoro -> Res.string.bottom_bar_pomodoro
+        BottomNavTab.Shop -> Res.string.bottom_bar_shop
+        BottomNavTab.Purchases -> Res.string.bottom_bar_purchases
+    }
+)
