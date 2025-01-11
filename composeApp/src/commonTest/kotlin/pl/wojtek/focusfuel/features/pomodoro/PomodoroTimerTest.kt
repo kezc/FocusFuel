@@ -37,7 +37,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN initial state WHEN initialized THEN it is work phase with correct duration`() = runTest {
+    fun `Given initial state, when initialized, then it is work phase with correct duration`() = runTest {
         createSut().state.logTest {
             val initialState = awaitItem()
             assertEquals(PomodoroPhase.WORK, initialState.currentPhase)
@@ -48,7 +48,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN timer is stopped WHEN toggleTimer is called THEN it starts and stops correctly`() =
+    fun `Given timer is stopped, when toggleTimer is called, then it starts and stops correctly`() =
         runTest {
             val pomodoroTimer = createSut()
             pomodoroTimer.state.logTest {
@@ -61,7 +61,7 @@ class PomodoroTimerTest : BaseTest() {
         }
 
     @Test
-    fun `GIVEN timer is running WHEN reset is called THEN it returns to initial state`() = runTest {
+    fun `Given timer is running, when reset is called, then it returns to initial state`() = runTest {
         val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.toggleTimer()
@@ -75,7 +75,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN work phase WHEN skip is called THEN it transitions to short break`() = runTest {
+    fun `Given work phase, when skip is called, then it transitions to short break`() = runTest {
         val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip()
@@ -86,7 +86,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN short break WHEN skip is called THEN it transitions to work`() = runTest {
+    fun `Given short break, when skip is called, then it transitions to work`() = runTest {
         val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip() // Move to SHORT_BREAK
@@ -99,7 +99,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN 4 completed work phases WHEN skip is called THEN it transitions to long break`() =
+    fun `Given 4 completed work phases, when skip is called, then it transitions to long break`() =
         runTest {
             val pomodoroTimer = createSut()
             pomodoroTimer.state.logTest {
@@ -116,7 +116,7 @@ class PomodoroTimerTest : BaseTest() {
         }
 
     @Test
-    fun `GIVEN timer is running WHEN time advances THEN it decrements correctly`() = runTest {
+    fun `Given timer is running, when time advances, then it decrements correctly`() = runTest {
         val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.toggleTimer() // Start timer
@@ -129,7 +129,7 @@ class PomodoroTimerTest : BaseTest() {
     }
 
     @Test
-    fun `GIVEN timer is running WHEN time runs out THEN it transitions phase`() = runTest {
+    fun `Given timer is running, when time runs out, then it transitions phase`() = runTest {
         val pomodoroTimer = createSut()
         pomodoroTimer.state.logTest {
             pomodoroTimer.skip() // Move to SHORT_BREAK

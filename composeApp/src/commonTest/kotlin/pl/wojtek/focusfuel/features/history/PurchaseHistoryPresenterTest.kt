@@ -54,7 +54,7 @@ class PurchaseHistoryPresenterTest : BaseTest() {
     )
 
     @Test
-    fun `given presenter is created, when initial state is observed, then shows loading followed by purchases`() =
+    fun `Given presenter is created, when initial state is observed, then shows loading followed by purchases`() =
         runTest {
             createSut().test {
                 val initialState = awaitItem()
@@ -72,7 +72,7 @@ class PurchaseHistoryPresenterTest : BaseTest() {
         }
 
     @Test
-    fun `given purchase exists, when used status is updated, then repository is called`() = runTest {
+    fun `Given purchase exists, when used status is updated, then repository is called`() = runTest {
         createSut().test {
             expectMostRecentItem().eventSink(PurchaseHistoryEvent.UpdateUsedStatus(purchaseId = 1, used = true))
 
@@ -82,7 +82,7 @@ class PurchaseHistoryPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given update fails, when used status is updated, then show and hide error`() = runTest {
+    fun `Given update fails, when used status is updated, then show and hide error`() = runTest {
         val error = RuntimeException("Update failed")
         coEvery { shopRepository.updatePurchaseUsedStatus(any(), any()) } returns error.left()
 

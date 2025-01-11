@@ -36,7 +36,7 @@ class AddProductPresenterTest : BaseTest() {
     )
 
     @Test
-    fun `given presenter is created, when initial state is observed, then shows empty form`() = runTest {
+    fun `Given presenter is created, when initial state is observed, then shows empty form`() = runTest {
         createSut().test {
             val state = awaitItem()
             assertEquals("", state.name)
@@ -48,7 +48,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given presenter is created with existing product, when initial state is observed, then shows prefilled form`() =
+    fun `Given presenter is created with existing product, when initial state is observed, then shows prefilled form`() =
         runTest {
             createSut(mockProduct).test {
                 val state = awaitItem()
@@ -60,7 +60,7 @@ class AddProductPresenterTest : BaseTest() {
         }
 
     @Test
-    fun `given form is empty, when add is clicked, then shows validation errors`() = runTest {
+    fun `Given form is empty, when add is clicked, then shows validation errors`() = runTest {
         createSut().test {
             val initialState = awaitItem()
 
@@ -73,7 +73,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given valid form data, when add is clicked, then creates product and navigates back`() = runTest {
+    fun `Given valid form data, when add is clicked, then creates product and navigates back`() = runTest {
         createSut().test {
             val initialState = awaitItem()
             initialState.eventSink(AddProductEvent.SetName("New Product"))
@@ -88,7 +88,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given existing product, when form is submitted, then updates product and navigates back`() = runTest {
+    fun `Given existing product, when form is submitted, then updates product and navigates back`() = runTest {
         createSut(mockProduct).test {
             val initialState = awaitItem()
 
@@ -104,7 +104,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given form is open, when close is clicked, then navigates back`() = runTest {
+    fun `Given form is open, when close is clicked, then navigates back`() = runTest {
         createSut().test {
             val initialState = awaitItem()
 
@@ -115,7 +115,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given repository fails, when add is clicked, then show and hide error`() = runTest {
+    fun `Given repository fails, when add is clicked, then show and hide error`() = runTest {
         val error = RuntimeException("Failed to add product")
         coEvery { shopRepository.addProduct(any(), any()) } returns error.left()
 
@@ -137,7 +137,7 @@ class AddProductPresenterTest : BaseTest() {
     }
 
     @Test
-    fun `given updating product fails, when update is clicked, then show and hide error`() = runTest {
+    fun `Given updating product fails, when update is clicked, then show and hide error`() = runTest {
         val error = RuntimeException("Failed to update product")
         coEvery { shopRepository.updateProduct(any(), any(), any()) } returns error.left()
 
