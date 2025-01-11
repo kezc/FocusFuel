@@ -97,7 +97,7 @@ fun PurchaseHistoryUI(
 @Composable
 private fun PurchasesList(state: PurchaseHistoryState, padding: PaddingValues) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp) + padding
     ) {
         state.purchases.forEach { purchase ->
