@@ -1,16 +1,21 @@
 package pl.wojtek.focusfuel.ui.common
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
 fun AppLoadingScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Center) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         Text("Loading...")
         CircularProgressIndicator()
     }
