@@ -7,7 +7,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.mmk.kmpnotifier.extensions.composeDesktopResourcesPath
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.slack.circuit.backstack.rememberSaveableBackStack
@@ -15,7 +14,6 @@ import com.slack.circuit.foundation.rememberCircuitNavigator
 import pl.wojtek.focusfuel.di.AppComponent
 import pl.wojtek.focusfuel.di.create
 import pl.wojtek.focusfuel.mainscreen.MainScreen
-import java.io.File
 
 fun main() = application {
     val windowState =
@@ -29,7 +27,6 @@ fun main() = application {
     NotifierManager.initialize(
         NotificationPlatformConfiguration.Desktop(
             showPushNotification = false,
-            notificationIconPath = composeDesktopResourcesPath() + File.separator + "notification_icon.png",
         )
     )
     appComponent.pomodoroNotificationsManager.value.init()
