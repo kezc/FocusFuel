@@ -50,10 +50,7 @@ class PomodoroTimer(
     }
 
     fun skip() {
-        stopTimer()
-        _state.update { currentState ->
-            currentState.transitionToNextState()
-        }
+        _state.update { currentState -> currentState.transitionToNextState() }
     }
 
     private fun startTimer() {
@@ -118,12 +115,9 @@ class PomodoroTimer(
         }
 
     companion object {
-//        const val WORK_TIME_MS = 25 * 60 * 1000L // 25 minutes
-//        const val SHORT_BREAK_TIME_MS = 5 * 60 * 1000L // 5 minutes
-//        const val LONG_BREAK_TIME_MS = 15 * 60 * 1000L // 15 minutes
-const val WORK_TIME_MS = 10 * 1000L // 10 sec
-        const val SHORT_BREAK_TIME_MS = 5 * 1000L // 5 sec
-        const val LONG_BREAK_TIME_MS = 15 * 1000L // 15 sec
+        const val WORK_TIME_MS = 25 * 60 * 1000L // 25 minutes
+        const val SHORT_BREAK_TIME_MS = 5 * 60 * 1000L // 5 minutes
+        const val LONG_BREAK_TIME_MS = 15 * 60 * 1000L // 15 minutes
     }
 }
 
