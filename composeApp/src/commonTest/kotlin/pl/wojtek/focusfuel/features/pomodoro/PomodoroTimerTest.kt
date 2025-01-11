@@ -1,8 +1,7 @@
-package pl.wojtek.focusfuel.pomodoro
+package pl.wojtek.focusfuel.features.pomodoro
 
 import app.cash.turbine.TurbineTestContext
 import app.cash.turbine.test
-import co.touchlab.kermit.CommonWriter
 import co.touchlab.kermit.Logger
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,9 +10,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import pl.wojtek.focusfuel.features.pomodoro.PomodoroPhase
-import pl.wojtek.focusfuel.features.pomodoro.PomodoroTimer
 import pl.wojtek.focusfuel.repository.PomodorosRepository
+import pl.wojtek.focusfuel.util.BaseTest
 import pl.wojtek.focusfuel.util.datetime.TimestampProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,7 +20,7 @@ import kotlin.test.assertTrue
 import kotlin.time.Duration
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PomodoroTimerTest {
+class PomodoroTimerTest : BaseTest() {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val timestampProvider = object : TimestampProvider {
@@ -31,7 +29,6 @@ class PomodoroTimerTest {
     private val pomodorosRepository: PomodorosRepository = mockk(relaxUnitFun = true)
 
     private fun createSut(): PomodoroTimer {
-        Logger.setLogWriters(CommonWriter())
         return PomodoroTimer(
             timestampProvider = timestampProvider,
             coroutineScope = TestScope(testDispatcher),
