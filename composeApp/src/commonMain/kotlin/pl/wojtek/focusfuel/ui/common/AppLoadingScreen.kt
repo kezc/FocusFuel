@@ -8,6 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.loading_text
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppLoadingScreen(modifier: Modifier = Modifier) {
@@ -16,7 +19,7 @@ fun AppLoadingScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Loading...")
+        Text(stringResource(Res.string.loading_text))
         CircularProgressIndicator()
     }
 }

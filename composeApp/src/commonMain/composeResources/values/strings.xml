@@ -1,25 +1,37 @@
 <resources>
-    <string name="purchase_history_title">Purchase History</string>
-    <string name="purchase_history_used">used?</string>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
     <string name="common_back">Back</string>
-    <string name="shop_title">Shop</string>
-    <string name="pomodoro_focus_time">Focus Time</string>
-    <string name="pomodoro_short_break">Short Break</string>
-    <string name="pomodoro_long_break">Long Break</string>
-    <string name="shop_purchase_success">Purchase Successful</string>
-    <string name="shop_insufficient_pomodoros">Insufficient Pomodoros</string>
-    <string name="pomodoro_reset_button_description">Reset</string>
-    <string name="pomodoro_skip_button_description">Skip</string>
+
     <string name="bottom_bar_pomodoro">Pomodoro</string>
     <string name="bottom_bar_purchases">Purchases</string>
     <string name="bottom_bar_shop">Shop</string>
-    <string name="add_product_error_empty_name">Name cannot be empty</string>
-    <string name="add_product_error_invalid_price">Invalid price</string>
+
+    <string name="loading_text">Loading…</string>
+
+    <string name="purchase_history_title">Purchase History</string>
+    <string name="purchase_history_used">used?</string>
+
+    <string name="pomodoro_focus_time">Focus Time</string>
+    <string name="pomodoro_short_break">Short Break</string>
+    <string name="pomodoro_long_break">Long Break</string>
+    <string name="pomodoro_reset_button_description">Reset</string>
+    <string name="pomodoro_skip_button_description">Skip</string>
+
+    <string name="shop_title">Shop</string>
+    <string name="shop_purchase_success">Purchase Successful</string>
+    <string name="shop_insufficient_pomodoros">Insufficient Pomodoros</string>
+    <string name="confirm_purchase_title">Are you sure?</string>
+
+
     <string name="add_product_title">Add Product</string>
     <string name="add_product_name_label">Product Name</string>
     <string name="add_product_price_label">Product Price</string>
     <string name="add_product_button_label">Add Product</string>
+    <string name="add_product_error_empty_name">Name cannot be empty</string>
+    <string name="add_product_error_invalid_price">Invalid price</string>
     <string name="purchase_history_no_purchases_available">Looks like you haven't made any purchases yet!</string>
+
     <string name="notification_work_title">Time to work!</string>
     <string name="notification_short_break_title">Short break time!</string>
     <string name="notification_long_break_title">Long break time!</string>

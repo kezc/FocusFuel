@@ -8,6 +8,11 @@ import com.slack.circuit.overlay.OverlayEffect
 import com.slack.circuit.overlay.OverlayHost
 import com.slack.circuitx.overlays.DialogResult
 import com.slack.circuitx.overlays.alertDialogOverlay
+import focusfuel.composeapp.generated.resources.Res
+import focusfuel.composeapp.generated.resources.common_no
+import focusfuel.composeapp.generated.resources.common_yes
+import focusfuel.composeapp.generated.resources.confirm_purchase_title
+import org.jetbrains.compose.resources.stringResource
 import pl.wojtek.focusfuel.repository.Product
 
 @Composable
@@ -29,9 +34,9 @@ fun ConfirmPurchaseDialogHandler(product: Product?, eventSink: (ShopEvent) -> Un
 suspend fun OverlayHost.showConfirmPurchaseDialog(): DialogResult {
     return show(
         alertDialogOverlay(
-            title = { Text("Are you sure?") },
-            confirmButton = { onClick -> Button(onClick = onClick) { Text("Yes") } },
-            dismissButton = { onClick -> Button(onClick = onClick) { Text("No") } },
+            title = { Text(stringResource(Res.string.confirm_purchase_title)) },
+            confirmButton = { onClick -> Button(onClick = onClick) { Text(stringResource(Res.string.common_yes)) } },
+            dismissButton = { onClick -> Button(onClick = onClick) { Text(stringResource(Res.string.common_no)) } },
         )
     )
 }
