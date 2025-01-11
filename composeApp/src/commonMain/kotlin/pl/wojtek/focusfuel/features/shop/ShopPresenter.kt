@@ -60,6 +60,7 @@ data class ShopState(
     val selectedProductToChange: Product?,
     val selectedProductToBuy: Product?,
     val isLoading: Boolean,
+    val error: Throwable? = null
 ) : CircuitUiState
 
 @CircuitInject(ShopScreen::class, AppScope::class)
@@ -89,6 +90,7 @@ class ShopPresenter(
         var selectedProductToBuy by remember { mutableStateOf<Product?>(null) }
 
         return ShopState(
+            error = error.value,
             isLoading = progress.state.value,
             products = products.getOrElse { emptyList() },
             orderResult = orderResult,

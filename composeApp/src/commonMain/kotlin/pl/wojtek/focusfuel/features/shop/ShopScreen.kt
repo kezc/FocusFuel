@@ -77,7 +77,7 @@ fun ShopUI(
     state: ShopState,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
-    ShowSnackbarHandler(snackbarHostState, state.orderResult?.toText())
+    ShowSnackbarHandler(snackbarHostState, state.orderResult?.toText() ?: state.error?.message)
 
     Scaffold(
         topBar = {
