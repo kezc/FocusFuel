@@ -38,8 +38,8 @@ kotlin {
         val jvmMain by getting
 
         androidMain.dependencies {
-            implementation("androidx.core:core-splashscreen:1.0.1")
             implementation(compose.preview)
+            implementation(libs.androidx.core.splashscreen)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.lifecycle.process)
         }
@@ -91,7 +91,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.coroutines.swing)
         }
     }
 }
