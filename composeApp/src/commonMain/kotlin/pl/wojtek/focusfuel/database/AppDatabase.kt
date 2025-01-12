@@ -16,7 +16,7 @@ import pl.wojtek.focusfuel.database.model.PurchaseEntity
 
 @Database(
     entities = [PomodoroEntity::class, ProductEntity::class, PurchaseEntity::class],
-    version = 2
+    version = 1
 )
 @TypeConverters(DateConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
