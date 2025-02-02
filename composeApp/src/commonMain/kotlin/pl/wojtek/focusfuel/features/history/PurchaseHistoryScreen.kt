@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -100,8 +101,11 @@ private fun PurchasesList(state: PurchaseHistoryState, padding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(16.dp) + padding
     ) {
-        state.purchases.forEach { purchase ->
-            item(purchase.purchaseId) { PurchaseItem(purchase, state.eventSink) }
+        items(
+            items = state.purchases,
+            key = { it.purchaseId },
+        ) { purchase ->
+            PurchaseItem(purchase, state.eventSink)
         }
     }
 }

@@ -3,13 +3,13 @@ package pl.wojtek.focusfuel.features.shop
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -103,10 +103,14 @@ fun ShopUI(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp) + innerPadding.onlyBottom()
         ) {
-            state.products.forEach { product ->
-                item(key = product.id, contentType = Product::class) { ProductCard(product, state.eventSink) }
+            items(
+                items = state.products,
+                key = { it.id },
+                contentType = { Product::class.java }
+            ) { product ->
+                ProductCard(product, state.eventSink)
             }
-            item { AddNewProductCard(state.eventSink) }
+            item(key = "add_new_product") { AddNewProductCard(state.eventSink) }
         }
     }
 }
@@ -157,7 +161,6 @@ private fun PomodorosBalanceIcon(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProductCard(
     product: Product,
